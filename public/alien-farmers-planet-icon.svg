@@ -1,0 +1,25 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="planet-core" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(27 25) rotate(48) scale(24)">
+      <stop stop-color="#E5FF71" stop-opacity=".42"/>
+      <stop offset=".38" stop-color="#27311B"/>
+      <stop offset="1" stop-color="#070908"/>
+    </radialGradient>
+    <filter id="glow" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="2.2"/>
+    </filter>
+    <clipPath id="ring-front">
+      <rect x="0" y="32" width="64" height="32"/>
+    </clipPath>
+  </defs>
+  <circle cx="32" cy="32" r="28" fill="#070908" stroke="#2E352F" stroke-width="1.5"/>
+  <g transform="rotate(-16 32 32)">
+    <ellipse cx="32" cy="32" rx="25" ry="10" stroke="#B7DB1D" stroke-width="2" opacity=".42"/>
+  </g>
+  <circle cx="32" cy="32" r="13.5" fill="url(#planet-core)" stroke="#D6F24A" stroke-width="2"/>
+  <g transform="rotate(-16 32 32)" clip-path="url(#ring-front)">
+    <ellipse cx="32" cy="32" rx="25" ry="10" stroke="#D6F24A" stroke-width="2.4"/>
+  </g>
+  <circle cx="8.8" cy="34.5" r="4.2" fill="#B7DB1D" opacity=".3" filter="url(#glow)"/>
+  <circle cx="8.8" cy="34.5" r="2.3" fill="#D8F84A"/>
+</svg>

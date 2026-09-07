@@ -1,0 +1,11 @@
+import type { VisitorContext, SupportSettings } from './preview-data';
+export type Actor = 'visitor' | 'agent';
+export type ConversationStatus = 'open' | 'closed';
+export type Message = { id: string; conversationId: string; sequence: number; clientMessageId: string; senderType: Actor | 'system'; agentId: string | null; body: string; createdAt: string };
+export type Agent = { id: string; name: string };
+export type PreviewCustomer = { userId: string; displayName: string; membershipStatus: string; locale: string };
+export type Visitor = { id: string; firstSeenAt: string; lastSeenAt: string; language: string; sourceSite: string; customerUserId: string | null };
+export type Conversation = { id: string; visitorId: string; status: ConversationStatus; assignedAgentId: string | null; lastMessageAt: string; createdAt: string; closedAt: string | null; agentReadSequence: number; visitorReadSequence: number; sequence: number; sample: boolean; visitor: Visitor; customer: PreviewCustomer | null; messages: Message[]; online: boolean; typing: boolean };
+export type Snapshot = { actor: Actor; actorId: string; conversations: (Conversation & {context?:VisitorContext})[]; agents: Agent[]; customers: PreviewCustomer[]; supportOnline: boolean; preview: true; settings?:SupportSettings };
+export type OutboxItem = { id: string; conversationId: string; body: string; createdAt: string; state: 'pending' | 'sending' | 'failed'; error?: string };
+export type ConnectionState = 'connecting' | 'connected' | 'reconnecting';
