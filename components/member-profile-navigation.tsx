@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type SyntheticEvent } from 'react';
+import { useEffect, useRef, useState, type RefObject, type SyntheticEvent } from 'react';
 import Image from 'next/image';
 import { Bell, CalendarDays, Eye, EyeOff, LoaderCircle, ShoppingBag } from 'lucide-react';
 import {
@@ -21,11 +21,11 @@ export function openMemberAuth(mode: 'login' | 'register' = 'login') {
 }
 
 const copy = {
-  en: { login: 'Sign in', register: 'Register', email: 'Email', password: 'Password', confirmPassword: 'Confirm password', passwordMismatch: 'The passwords do not match.', name: 'Display name', birth: 'Date of birth', birthHint: 'YYYY-MM-DD', submitLogin: 'Sign in', submitRegister: 'Create account', loading: 'Connecting…', real: 'Use your ALIEN FARMERS member account.', confirm: 'Account created. Check your email to confirm it, then sign in.', profile: 'Open member profile', notifications: 'Messages and notifications', orders: 'Current orders', showPassword: 'Show password', hidePassword: 'Hide password', failed: 'Please check your details and try again.' },
-  th: { login: 'เข้าสู่ระบบ', register: 'สมัครสมาชิก', email: 'อีเมล', password: 'รหัสผ่าน', confirmPassword: 'ยืนยันรหัสผ่าน', passwordMismatch: 'รหัสผ่านไม่ตรงกัน', name: 'ชื่อที่แสดง', birth: 'วันเกิด', birthHint: 'ปปปป-ดด-วว', submitLogin: 'เข้าสู่ระบบ', submitRegister: 'สร้างบัญชี', loading: 'กำลังเชื่อมต่อ…', real: 'ใช้บัญชีสมาชิก ALIEN FARMERS ของคุณ', confirm: 'สร้างบัญชีแล้ว โปรดยืนยันทางอีเมล แล้วเข้าสู่ระบบ', profile: 'เปิดโปรไฟล์สมาชิก', notifications: 'ข้อความและการแจ้งเตือน', orders: 'คำสั่งซื้อปัจจุบัน', showPassword: 'แสดงรหัสผ่าน', hidePassword: 'ซ่อนรหัสผ่าน', failed: 'โปรดตรวจสอบข้อมูลแล้วลองอีกครั้ง' },
-  'zh-CN': { login: '登录', register: '注册', email: '邮箱', password: '密码', confirmPassword: '确认密码', passwordMismatch: '两次输入的密码不一致。', name: '显示名称', birth: '出生日期', birthHint: '年-月-日', submitLogin: '登录', submitRegister: '创建账户', loading: '正在连接…', real: '使用你的 ALIEN FARMERS 会员账号。', confirm: '账户已创建，请查收确认邮件，然后登录。', profile: '打开会员主页', notifications: '消息与通知', orders: '当前订单', showPassword: '显示密码', hidePassword: '隐藏密码', failed: '请检查填写内容后重试。' },
-  'zh-TW': { login: '登入', register: '註冊', email: '電子郵件', password: '密碼', confirmPassword: '確認密碼', passwordMismatch: '兩次輸入的密碼不一致。', name: '顯示名稱', birth: '出生日期', birthHint: '年-月-日', submitLogin: '登入', submitRegister: '建立帳戶', loading: '正在連線…', real: '使用你的 ALIEN FARMERS 會員帳戶。', confirm: '帳戶已建立，請查收確認郵件，然後登入。', profile: '開啟會員主頁', notifications: '訊息與通知', orders: '目前訂單', showPassword: '顯示密碼', hidePassword: '隱藏密碼', failed: '請檢查填寫內容後重試。' },
-  ru: { login: 'Войти', register: 'Регистрация', email: 'Эл. почта', password: 'Пароль', confirmPassword: 'Повторите пароль', passwordMismatch: 'Пароли не совпадают.', name: 'Отображаемое имя', birth: 'Дата рождения', birthHint: 'ГГГГ-ММ-ДД', submitLogin: 'Войти', submitRegister: 'Создать аккаунт', loading: 'Подключение…', real: 'Используйте свою учётную запись ALIEN FARMERS.', confirm: 'Аккаунт создан. Подтвердите email, затем войдите.', profile: 'Открыть профиль', notifications: 'Сообщения и уведомления', orders: 'Текущие заказы', showPassword: 'Показать пароль', hidePassword: 'Скрыть пароль', failed: 'Проверьте данные и повторите попытку.' },
+  en: { login: 'Sign in', register: 'Register', email: 'Email', password: 'Password', confirmPassword: 'Confirm password', passwordMismatch: 'The passwords do not match.', name: 'Display name', birth: 'Date of birth', birthFormat: 'Enter as YYYY - MM - DD', birthInvalid: 'Enter a valid date of birth in YYYY-MM-DD format.', year: 'Year', month: 'Month', day: 'Day', submitLogin: 'Sign in', submitRegister: 'Create account', loading: 'Connecting…', real: 'Use your ALIEN FARMERS member account.', confirm: 'Account created. Check your email to confirm it, then sign in.', profile: 'Open member profile', notifications: 'Messages and notifications', orders: 'Current orders', showPassword: 'Show password', hidePassword: 'Hide password', failed: 'Please check your details and try again.' },
+  th: { login: 'เข้าสู่ระบบ', register: 'สมัครสมาชิก', email: 'อีเมล', password: 'รหัสผ่าน', confirmPassword: 'ยืนยันรหัสผ่าน', passwordMismatch: 'รหัสผ่านไม่ตรงกัน', name: 'ชื่อที่แสดง', birth: 'วันเกิด', birthFormat: 'กรอกแบบ ปปปป - ดด - วว', birthInvalid: 'กรุณากรอกวันเกิดที่ถูกต้องในรูปแบบ ปปปป-ดด-วว', year: 'ปี', month: 'เดือน', day: 'วัน', submitLogin: 'เข้าสู่ระบบ', submitRegister: 'สร้างบัญชี', loading: 'กำลังเชื่อมต่อ…', real: 'ใช้บัญชีสมาชิก ALIEN FARMERS ของคุณ', confirm: 'สร้างบัญชีแล้ว โปรดยืนยันทางอีเมล แล้วเข้าสู่ระบบ', profile: 'เปิดโปรไฟล์สมาชิก', notifications: 'ข้อความและการแจ้งเตือน', orders: 'คำสั่งซื้อปัจจุบัน', showPassword: 'แสดงรหัสผ่าน', hidePassword: 'ซ่อนรหัสผ่าน', failed: 'โปรดตรวจสอบข้อมูลแล้วลองอีกครั้ง' },
+  'zh-CN': { login: '登录', register: '注册', email: '邮箱', password: '密码', confirmPassword: '确认密码', passwordMismatch: '两次输入的密码不一致。', name: '显示名称', birth: '出生日期', birthFormat: '请按 年年年年 - 月月 - 日日 输入', birthInvalid: '请输入有效的出生日期，格式为 年年年年-月月-日日。', year: '年', month: '月', day: '日', submitLogin: '登录', submitRegister: '创建账户', loading: '正在连接…', real: '使用你的 ALIEN FARMERS 会员账号。', confirm: '账户已创建，请查收确认邮件，然后登录。', profile: '打开会员主页', notifications: '消息与通知', orders: '当前订单', showPassword: '显示密码', hidePassword: '隐藏密码', failed: '请检查填写内容后重试。' },
+  'zh-TW': { login: '登入', register: '註冊', email: '電子郵件', password: '密碼', confirmPassword: '確認密碼', passwordMismatch: '兩次輸入的密碼不一致。', name: '顯示名稱', birth: '出生日期', birthFormat: '請按 年年年年 - 月月 - 日日 輸入', birthInvalid: '請輸入有效的出生日期，格式為 年年年年-月月-日日。', year: '年', month: '月', day: '日', submitLogin: '登入', submitRegister: '建立帳戶', loading: '正在連線…', real: '使用你的 ALIEN FARMERS 會員帳戶。', confirm: '帳戶已建立，請查收確認郵件，然後登入。', profile: '開啟會員主頁', notifications: '訊息與通知', orders: '目前訂單', showPassword: '顯示密碼', hidePassword: '隱藏密碼', failed: '請檢查填寫內容後重試。' },
+  ru: { login: 'Войти', register: 'Регистрация', email: 'Эл. почта', password: 'Пароль', confirmPassword: 'Повторите пароль', passwordMismatch: 'Пароли не совпадают.', name: 'Отображаемое имя', birth: 'Дата рождения', birthFormat: 'Введите ГГГГ - ММ - ДД', birthInvalid: 'Введите действительную дату в формате ГГГГ-ММ-ДД.', year: 'Год', month: 'Месяц', day: 'День', submitLogin: 'Войти', submitRegister: 'Создать аккаунт', loading: 'Подключение…', real: 'Используйте свою учётную запись ALIEN FARMERS.', confirm: 'Аккаунт создан. Подтвердите email, затем войдите.', profile: 'Открыть профиль', notifications: 'Сообщения и уведомления', orders: 'Текущие заказы', showPassword: 'Показать пароль', hidePassword: 'Скрыть пароль', failed: 'Проверьте данные и повторите попытку.' },
 } satisfies Record<Locale, Record<string, string>>;
 
 function AlienGlyph({ filled }: { filled: boolean }) {
@@ -48,9 +48,27 @@ function PasswordField({ label, name, autoComplete, words }: { label: string; na
 }
 
 function BirthDateField({ words }: { words: Record<string, string> }) {
-  const [value, setValue] = useState('');
+  const [year, setYear] = useState('');
+  const [month, setMonth] = useState('');
+  const [day, setDay] = useState('');
+  const monthInput = useRef<HTMLInputElement>(null);
+  const dayInput = useRef<HTMLInputElement>(null);
   const picker = useRef<HTMLInputElement>(null);
-  return <label>{words.birth}<span className="member-input-with-action member-birth-input"><input name="dateOfBirth" type="text" inputMode="numeric" autoComplete="bday" placeholder={words.birthHint} pattern="\d{4}-\d{2}-\d{2}" value={value} onChange={event => setValue(event.target.value)} required /><button type="button" onClick={() => { const input = picker.current; if (!input) return; if (typeof input.showPicker === 'function') input.showPicker(); else input.click(); }} aria-label={words.birth} title={words.birth}><CalendarDays size={17} /></button><input ref={picker} className="member-hidden-date-picker" type="date" tabIndex={-1} aria-hidden="true" value={/^\d{4}-\d{2}-\d{2}$/.test(value) ? value : ''} onChange={event => setValue(event.target.value)} /></span></label>;
+  const value = `${year}-${month}-${day}`;
+  const update = (next: string, maxLength: number, setter: (value: string) => void, nextInput?: RefObject<HTMLInputElement | null>) => {
+    const digits = next.replace(/\D/g, '').slice(0, maxLength);
+    setter(digits);
+    if (digits.length === maxLength) nextInput?.current?.focus();
+  };
+  return <label>{words.birth}<small className="member-birth-format">{words.birthFormat}</small><span className="member-birth-segments"><input aria-label={words.year} inputMode="numeric" autoComplete="bday-year" placeholder="YYYY" pattern="\d{4}" maxLength={4} value={year} onChange={event => update(event.target.value, 4, setYear, monthInput)} required /><i aria-hidden="true">-</i><input ref={monthInput} aria-label={words.month} inputMode="numeric" autoComplete="bday-month" placeholder="MM" pattern="0[1-9]|1[0-2]" maxLength={2} value={month} onChange={event => update(event.target.value, 2, setMonth, dayInput)} required /><i aria-hidden="true">-</i><input ref={dayInput} aria-label={words.day} inputMode="numeric" autoComplete="bday-day" placeholder="DD" pattern="0[1-9]|[12]\d|3[01]" maxLength={2} value={day} onChange={event => update(event.target.value, 2, setDay)} required /><button type="button" onClick={() => { const input = picker.current; if (!input) return; if (typeof input.showPicker === 'function') input.showPicker(); else input.click(); }} aria-label={words.birth} title={words.birth}><CalendarDays size={17} /></button><input name="dateOfBirth" type="hidden" value={value} /><input ref={picker} className="member-hidden-date-picker" type="date" tabIndex={-1} aria-hidden="true" value={/^\d{4}-\d{2}-\d{2}$/.test(value) ? value : ''} onChange={event => { const [nextYear, nextMonth, nextDay] = event.target.value.split('-'); setYear(nextYear || ''); setMonth(nextMonth || ''); setDay(nextDay || ''); }} /></span></label>;
+}
+
+function isValidBirthDate(value: FormDataEntryValue | null) {
+  const text = String(value || '');
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+  if (!match) return false;
+  const date = new Date(`${text}T00:00:00Z`);
+  return date.getUTCFullYear() === Number(match[1]) && date.getUTCMonth() + 1 === Number(match[2]) && date.getUTCDate() === Number(match[3]);
 }
 
 export function MemberProfileNavigation({
@@ -152,6 +170,11 @@ export function MemberProfileNavigation({
     const form = new FormData(event.currentTarget);
     if (mode === 'register' && form.get('password') !== form.get('confirmPassword')) {
       setError(words.passwordMismatch);
+      setBusy(false);
+      return;
+    }
+    if (mode === 'register' && !isValidBirthDate(form.get('dateOfBirth'))) {
+      setError(words.birthInvalid);
       setBusy(false);
       return;
     }

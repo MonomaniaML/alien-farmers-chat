@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
   isAllowedMemberProxyRequest,
@@ -28,4 +29,12 @@ void test('member cookies are shared only across official production subdomains'
 void test('state-changing browser requests must be same-origin', () => {
   assert.equal(isSameOriginMutation(new Request('https://chat.alienfarmers.org/api/member/login', { headers: { origin: 'https://chat.alienfarmers.org', 'sec-fetch-site': 'same-origin' } })), true);
   assert.equal(isSameOriginMutation(new Request('https://chat.alienfarmers.org/api/member/login', { headers: { origin: 'https://evil.example', 'sec-fetch-site': 'cross-site' } })), false);
+});
+
+void test('registration presents date of birth as guided year, month and day segments', async () => {
+  const source = await readFile(new URL('../components/member-profile-navigation.tsx', import.meta.url), 'utf8');
+  assert.match(source, /className="member-birth-segments"/);
+  for (const placeholder of ['YYYY', 'MM', 'DD']) assert.match(source, new RegExp(`placeholder="${placeholder}"`));
+  assert.match(source, /name="dateOfBirth" type="hidden"/);
+  assert.match(source, /isValidBirthDate/);
 });
