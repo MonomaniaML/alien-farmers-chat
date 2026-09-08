@@ -9,6 +9,8 @@ export type MemberProfile = {
 
 const allowedMemberRoutes: Record<string, ReadonlySet<string>> = {
   session: new Set(['GET']),
+  orders: new Set(['GET']),
+  notifications: new Set(['GET']),
   login: new Set(['POST']),
   register: new Set(['POST']),
   logout: new Set(['POST']),

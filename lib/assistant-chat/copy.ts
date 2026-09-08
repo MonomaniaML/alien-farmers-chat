@@ -46,8 +46,10 @@ Private channel · Visible to management only|ช่องทางส่วน�
 Local preview|ตัวอย่างในเครื่อง|本地预览|本機預覽|Локальное демо
 Test data|ข้อมูลทดสอบ|测试数据|測試資料|Тестовые данные
 Support preview|ตัวอย่างฝ่ายบริการ|客服预览|客服預覽|Демо поддержки
+Support workspace|พื้นที่ทำงานฝ่ายบริการ|客服工作区|客服工作區|Рабочая область поддержки
 Reset Demo Data|รีเซ็ตข้อมูลตัวอย่าง|重置演示数据|重設示範資料|Сбросить демо-данные
 Stored on this device|จัดเก็บในอุปกรณ์นี้|保存在此设备|儲存在此裝置|Хранится на этом устройстве
+No messages yet|ยังไม่มีข้อความ|暂无消息|暫無訊息|Сообщений пока нет
 Back to conversations|กลับไปยังการสนทนา|返回对话列表|返回對話列表|Назад к диалогам
 Simulate offline|จำลองออฟไลน์|模拟离线|模擬離線|Включить офлайн
 Simulate online|จำลองออนไลน์|模拟在线|模擬在線|Включить онлайн
@@ -187,6 +189,16 @@ Active|ใช้งานอยู่|进行中|進行中|Активен
 Reply as staff…|ตอบในฐานะเจ้าหน้าที่…|以客服身份回复…|以客服身份回覆…|Ответить как сотрудник…
 Send staff reply|ส่งคำตอบเจ้าหน้าที่|发送客服回复|傳送客服回覆|Отправить ответ
 Open customer view|เปิดมุมมองลูกค้า|打开用户端|開啟使用者端|Открыть клиентский вид
+For help with this question, please contact Customer Support.|หากต้องการความช่วยเหลือเกี่ยวกับคำถามนี้ โปรดติดต่อฝ่ายบริการลูกค้า|如需此问题的帮助，请联系客户支持。|如需此問題的協助，請聯絡客戶支援。|Обратитесь в службу поддержки по этому вопросу.
+For delivery help, contact Customer Support and include your order number.|หากต้องการความช่วยเหลือด้านการจัดส่ง โปรดติดต่อฝ่ายบริการลูกค้าและแจ้งหมายเลขคำสั่งซื้อ|如需配送帮助，请联系客户支持并提供订单号。|如需配送協助，請聯絡客戶支援並提供訂單號碼。|По вопросам доставки обратитесь в поддержку и укажите номер заказа.
+Opening hours can vary by location. Please check the selected store before visiting.|เวลาทำการอาจแตกต่างกันในแต่ละสาขา โปรดตรวจสอบสาขาที่เลือกก่อนเดินทาง|各门店营业时间可能不同，请在到店前确认所选门店。|各門市營業時間可能不同，請在到店前確認所選門市。|Часы работы зависят от магазина. Проверьте выбранный магазин перед визитом.
+Lucky Game information is available on the ALIEN FARMERS website.|ดูข้อมูล Lucky Game ได้บนเว็บไซต์ ALIEN FARMERS|Lucky Game 信息可在 ALIEN FARMERS 网站查看。|Lucky Game 資訊可在 ALIEN FARMERS 網站查看。|Информация о Lucky Game доступна на сайте ALIEN FARMERS.
+For wholesale and business inquiries, please contact Customer Support.|สำหรับคำถามด้านค้าส่งและธุรกิจ โปรดติดต่อฝ่ายบริการลูกค้า|批发及商务咨询请联系客户支持。|批發及商務諮詢請聯絡客戶支援。|По вопросам опта и сотрудничества обратитесь в службу поддержки.
+Your message is waiting for Customer Support.|ข้อความของคุณกำลังรอฝ่ายบริการลูกค้า|你的消息正在等待客户支持处理。|你的訊息正在等待客戶支援處理。|Ваше сообщение ожидает ответа службы поддержки.
+Customer Support is currently offline. Your message remains on this device.|ขณะนี้ฝ่ายบริการลูกค้าออฟไลน์ ข้อความของคุณยังคงอยู่ในอุปกรณ์นี้|客户支持当前离线，你的消息仍保存在此设备上。|客戶支援目前離線，你的訊息仍儲存在此裝置上。|Служба поддержки сейчас не в сети. Сообщение осталось на этом устройстве.
+Delivery tracking is not available in this chat yet. Please contact Customer Support and include your order number.|ยังไม่สามารถติดตามการจัดส่งในแชตนี้ได้ โปรดติดต่อฝ่ายบริการลูกค้าและแจ้งหมายเลขคำสั่งซื้อ|此聊天暂不支持配送查询，请联系客户支持并提供订单号。|此聊天暫不支援配送查詢，請聯絡客戶支援並提供訂單號碼。|Отслеживание доставки пока недоступно в этом чате. Обратитесь в поддержку и укажите номер заказа.
+Private feedback delivery is not available in this chat yet.|แชตนี้ยังไม่รองรับการส่งความคิดเห็นส่วนตัว|此聊天暂不支持提交私密反馈。|此聊天暫不支援提交私密意見。|Отправка личных отзывов пока недоступна в этом чате.
+Wholesale inquiry delivery is not available in this chat yet. Please contact Customer Support.|ยังไม่สามารถส่งคำถามด้านค้าส่งในแชตนี้ได้ โปรดติดต่อฝ่ายบริการลูกค้า|此聊天暂不支持提交批发咨询，请联系客户支持。|此聊天暫不支援提交批發諮詢，請聯絡客戶支援。|Отправка оптовых запросов пока недоступна в этом чате. Обратитесь в поддержку.
 Visible assistants|ผู้ช่วยที่มองเห็น|可见助手|可見助理|Доступные помощники
 Private feedback hidden|ซ่อนความคิดเห็นส่วนตัว|私密反馈已隐藏|私密意見已隱藏|Личные отзывы скрыты
 Open Product Verification from the ALIEN FARMERS website and enter or scan the verification code on your product. Never share a code publicly.|เปิดการตรวจสอบสินค้าจากเว็บไซต์ ALIEN FARMERS แล้วกรอกหรือสแกนรหัสสินค้า อย่าเผยแพร่รหัสต่อสาธารณะ|请从 ALIEN FARMERS 网站打开“产品验证”，输入或扫描产品验证码。请勿公开分享验证码。|請從 ALIEN FARMERS 網站開啟「產品驗證」，輸入或掃描產品驗證碼。請勿公開分享驗證碼。|Откройте проверку товара на сайте ALIEN FARMERS и введите или отсканируйте код. Не публикуйте его.

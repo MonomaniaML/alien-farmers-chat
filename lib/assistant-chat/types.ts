@@ -11,4 +11,4 @@ export interface ChatAssistant{
 }
 export type WholesaleInquiry={step:'interest'|'quantity'|'location'|'contact'|'review'|'submitted';interest:string;quantity:string;location:string;contact:string};
 export type AssistantConversation={messages:ChatMessage[];unread:number;updatedAt:string;draft:string;conversationStatus?:'active'|'waiting'|'closed';inquiry?:WholesaleInquiry};
-export type ConversationCenterState={version:1;lastOpened:string;supportOnline:boolean;conversations:Record<string,AssistantConversation>};
+export type ConversationCenterState={version:3;lastOpened:string;supportOnline:boolean;conversations:Record<string,AssistantConversation>};

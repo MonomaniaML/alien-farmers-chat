@@ -1,4 +1,4 @@
-import { LockKeyhole, RotateCcw, Sparkles } from 'lucide-react';
+import { LockKeyhole, Sparkles } from 'lucide-react';
 import {
   ASSISTANTS,
   isAnonymousAssistantAvailable,
@@ -23,14 +23,12 @@ export function ConversationList({
   state,
   selectedId,
   onSelect,
-  onReset,
   anonymous = false,
   onLockedSelect,
 }: {
   state: ConversationCenterState;
   selectedId: string;
   onSelect: (id: string) => void;
-  onReset: () => void;
   anonymous?: boolean;
   onLockedSelect?: () => void;
 }) {
@@ -52,9 +50,6 @@ export function ConversationList({
           <h1>{copy('Conversations')}</h1>
           <p>{copy('Choose the right place to start')}</p>
         </div>
-        <span className="assistant-preview-label">
-          {copy(process.env.NODE_ENV === 'production' ? 'Test data' : 'Local preview')}
-        </span>
       </header>
       <nav
         className="assistant-start-actions"
@@ -102,9 +97,7 @@ export function ConversationList({
                       <span className="assistant-row-copy">
                         <span className="assistant-row-top">
                           <strong>{copy(assistant.name)}</strong>
-                          <time dateTime={conversation.updatedAt}>
-                            {time(conversation.updatedAt)}
-                          </time>
+                          {conversation.updatedAt ? <time dateTime={conversation.updatedAt}>{time(conversation.updatedAt)}</time> : null}
                         </span>
                         <span className="assistant-row-description">
                           {copy(assistant.description)}
@@ -129,7 +122,7 @@ export function ConversationList({
                                 ? copy(last.body)
                                 : last?.sender === 'user'
                                   ? last.body
-                                  : copy(last?.body || '')}
+                                  : copy(last?.body || 'No messages yet')}
                             </>
                           )}
                         </span>
@@ -177,15 +170,6 @@ export function ConversationList({
           </section>
         ))}
       </div>
-      {process.env.NODE_ENV !== 'production' && (
-        <footer>
-          <button onClick={onReset}>
-            <RotateCcw size={14} />
-            {copy('Reset Demo Data')}
-          </button>
-          <span>{copy('Stored on this device')}</span>
-        </footer>
-      )}
     </aside>
   );
 }

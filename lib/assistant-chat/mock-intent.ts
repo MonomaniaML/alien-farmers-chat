@@ -11,10 +11,10 @@ const RULES:Array<[MockIntent,string[]]>=[
 export function mockIntentMatcher(text:string):MockIntent{const normalized=text.toLocaleLowerCase();return RULES.find(([,keywords])=>keywords.some(keyword=>normalized.includes(keyword)))?.[0]||'unknown';}
 export const INTENT_REPLIES:Record<Exclude<MockIntent,'unknown'>,string>={
  verification:'Open Product Verification from the ALIEN FARMERS website and enter or scan the verification code on your product. Never share a code publicly.',
- delivery:'For delivery help, the Delivery Assistant can guide you through mock tracking, ETA, areas and fees.',
+ delivery:'For delivery help, contact Customer Support and include your order number.',
  store:'Store details and directions are available from the Store Information section of the ALIEN FARMERS website.',
- hours:'Opening hours can vary by location. In this demo, please choose a store before relying on the displayed hours.',
- lucky_game:'Lucky Game information is available on the website. Eligibility and rewards shown in this preview are examples only.',
- wholesale:'The Wholesale Assistant can collect product, quantity, location and contact details for a business inquiry.',
+ hours:'Opening hours can vary by location. Please check the selected store before visiting.',
+ lucky_game:'Lucky Game information is available on the ALIEN FARMERS website.',
+ wholesale:'For wholesale and business inquiries, please contact Customer Support.',
  human:'I can connect you with Customer Support.',
 };

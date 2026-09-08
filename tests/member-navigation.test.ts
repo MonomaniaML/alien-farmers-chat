@@ -8,6 +8,8 @@ import {
 
 void test('member proxy exposes only the navigation authentication surface', () => {
   assert.equal(isAllowedMemberProxyRequest(['session'], 'GET'), true);
+  assert.equal(isAllowedMemberProxyRequest(['orders'], 'GET'), true);
+  assert.equal(isAllowedMemberProxyRequest(['notifications'], 'GET'), true);
   assert.equal(isAllowedMemberProxyRequest(['login'], 'POST'), true);
   assert.equal(isAllowedMemberProxyRequest(['register'], 'POST'), true);
   assert.equal(isAllowedMemberProxyRequest(['logout'], 'POST'), true);

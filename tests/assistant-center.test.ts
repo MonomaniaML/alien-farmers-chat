@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ASSISTANTS, canRoleAccess, createDemoState } from '../lib/assistant-chat/config.ts';
+import { ASSISTANTS, canRoleAccess, createInitialState } from '../lib/assistant-chat/config.ts';
 import { assistantText } from '../lib/assistant-chat/copy.ts';
 import { mockIntentMatcher } from '../lib/assistant-chat/mock-intent.ts';
 import { mockProductLookup } from '../lib/assistant-chat/mock-product-catalog.ts';
@@ -12,8 +12,8 @@ void test('conversation center defines five shared assistant channels with priva
  assert.equal(canRoleAccess(feedback!,'owner'),true);assert.equal(canRoleAccess(feedback!,'admin'),true);assert.equal(canRoleAccess(feedback!,'staff'),false);
  const wholesale=ASSISTANTS.find(item=>item.channel==='wholesale');
  assert.deepEqual(wholesale?.visibility,['owner','admin']);assert.equal(canRoleAccess(wholesale!,'staff'),false);
- const state=createDemoState();assert.equal(Object.keys(state.conversations).length,5);
- for(const assistant of ASSISTANTS){const conversation=state.conversations[assistant.id];assert.ok(conversation.messages.length>0);assert.ok(conversation.messages.some(message=>message.quickActions?.length));}
+ const state=createInitialState();assert.equal(Object.keys(state.conversations).length,5);assert.equal(state.version,3);
+ for(const assistant of ASSISTANTS){const conversation=state.conversations[assistant.id];assert.equal(conversation.messages.length,0);assert.equal(conversation.unread,0);}
 });
 
 void test('assistant interface and saved mock messages render in all supported languages',()=>{

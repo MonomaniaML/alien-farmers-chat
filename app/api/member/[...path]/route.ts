@@ -20,6 +20,9 @@ async function proxyMember(request: Request, context: { params: Promise<{ path: 
 
     const incoming = new URL(request.url);
     const upstream = new URL(`${memberApi}/${path[0]}`);
+    if (request.method === 'GET') {
+      incoming.searchParams.forEach((value, key) => upstream.searchParams.append(key, value));
+    }
     const headers = new Headers({ Accept: 'application/json' });
     const contentType = request.headers.get('content-type');
     const cookie = request.headers.get('cookie');

@@ -16,7 +16,6 @@ export function MemberAccessGate({open,onOpenChange,onContinueAnonymous,onAuthen
    </div>
    <p className="assistant-anonymous-note">{copy('Anonymous mode keeps messages only in this browser. Clearing site data or changing devices can remove them, and only AI Assistant and Customer Support are available.')}</p>
    <div className="assistant-access-actions"><button className="secondary" onClick={onContinueAnonymous}>{copy('Continue anonymously')}</button><button className="primary" onClick={onAuthenticate}>{copy('Log in or register')}</button></div>
-   <small className="assistant-access-preview">{copy(process.env.NODE_ENV === 'production'?'Test environment · Real member accounts are connected; conversations and cloud history remain test-only.':'Local preview · Real member accounts are connected; conversations and cloud history remain test-only.')}</small>
   </DialogContent>
  </Dialog>;
 }
