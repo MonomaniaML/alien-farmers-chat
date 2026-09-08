@@ -1,15 +1,16 @@
 'use client';
 
-import { useEffect, useState, type SyntheticEvent } from 'react';
+import { useEffect, useRef, useState, type SyntheticEvent } from 'react';
 import Image from 'next/image';
 import { Bell, LoaderCircle } from 'lucide-react';
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import type { Locale } from '@/lib/support/i18n';
 import type { MemberProfile } from '@/lib/member-navigation';
 
@@ -44,12 +45,14 @@ export function MemberProfileNavigation({
   memberCenterUrl = 'https://member.alienfarmers.org',
   unreadCount = 0,
   onSessionChange,
+  theme = 'dark',
 }: {
   locale: Locale;
   apiBase?: string;
   memberCenterUrl?: string;
   unreadCount?: number;
   onSessionChange?: (profile: MemberProfile | null) => void;
+  theme?: 'dark' | 'light';
 }) {
   const words = copy[locale];
   const [profile, setProfile] = useState<MemberProfile | null>(null);
@@ -60,6 +63,11 @@ export function MemberProfileNavigation({
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [avatarFailed, setAvatarFailed] = useState(false);
+  const onSessionChangeRef = useRef(onSessionChange);
+
+  useEffect(() => {
+    onSessionChangeRef.current = onSessionChange;
+  }, [onSessionChange]);
 
   useEffect(() => {
     let active = true;
@@ -69,12 +77,12 @@ export function MemberProfileNavigation({
         if (!active) return;
         const next = payload?.data?.authenticated ? payload.data.profile || null : null;
         setProfile(next);
-        onSessionChange?.(next);
+        onSessionChangeRef.current?.(next);
       })
       .catch(() => {})
       .finally(() => active && setReady(true));
     return () => { active = false; };
-  }, [apiBase, onSessionChange]);
+  }, [apiBase]);
 
   useEffect(() => {
     const listener = (event: Event) => {
@@ -134,14 +142,13 @@ export function MemberProfileNavigation({
         <a className="member-avatar-link" href={memberCenterUrl} aria-label={words.profile} title={words.profile}>
           {avatar ? <Image src={profile!.avatarUrl!} alt="" width={38} height={38} unoptimized onError={() => setAvatarFailed(true)} /> : <AlienGlyph filled />}
         </a>
-      </> : <button className="member-alien-login" onClick={() => openMemberAuth('login')} aria-label={words.login} title={words.login}><AlienGlyph filled={false} /></button>}
-
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="member-auth-sheet" side="right">
-          <SheetHeader>
-            <SheetTitle>{mode === 'login' ? words.login : words.register}</SheetTitle>
-            <SheetDescription>{words.real}</SheetDescription>
-          </SheetHeader>
+      </> : <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger render={<button className="member-alien-login" aria-label={words.login} title={words.login} />}><AlienGlyph filled={false} /></PopoverTrigger>
+        <PopoverContent className={`member-auth-popover theme-${theme}`} side="bottom" align="end" sideOffset={9}>
+          <PopoverHeader>
+            <PopoverTitle>{mode === 'login' ? words.login : words.register}</PopoverTitle>
+            <PopoverDescription>{words.real}</PopoverDescription>
+          </PopoverHeader>
           <div className="member-auth-tabs" role="tablist">
             <button className={mode === 'login' ? 'active' : ''} onClick={() => { setMode('login'); setError(''); }}>{words.login}</button>
             <button className={mode === 'register' ? 'active' : ''} onClick={() => { setMode('register'); setError(''); }}>{words.register}</button>
@@ -157,8 +164,8 @@ export function MemberProfileNavigation({
             {error && <p className="member-auth-error" role="alert">{error}</p>}
             <button className="member-auth-submit" type="submit" disabled={busy}>{busy ? <><LoaderCircle size={17} />{words.loading}</> : mode === 'login' ? words.submitLogin : words.submitRegister}</button>
           </form>
-        </SheetContent>
-      </Sheet>
+        </PopoverContent>
+      </Popover>}
     </div>
   );
 }
