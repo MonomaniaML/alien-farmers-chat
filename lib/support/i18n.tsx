@@ -2,6 +2,10 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 export type Locale='en'|'th'|'zh-CN'|'zh-TW'|'ru';
 export const languages:Record<Locale,string>={en:'English',th:'ไทย','zh-CN':'简体中文','zh-TW':'繁體中文',ru:'Русский'};
+const sharedLocaleCookie='af_locale';
+export function memberLocale(value?:string|null):Locale{const normalized=String(value||'').trim().toLowerCase();if(normalized==='zh-hans'||normalized==='zh-cn'||normalized==='zh')return 'zh-CN';if(normalized==='zh-hant'||normalized==='zh-tw'||normalized==='zh-hk')return 'zh-TW';if(normalized==='th'||normalized==='ru')return normalized;return 'en';}
+function cookieLocale(){const value=document.cookie.split(';').map(item=>item.trim()).find(item=>item.startsWith(`${sharedLocaleCookie}=`))?.split('=').slice(1).join('=');return value?memberLocale(decodeURIComponent(value)):null;}
+function persistSharedLocale(value:Locale){const secure=location.protocol==='https:'?'; Secure':'';const official=location.hostname==='alienfarmers.org'||location.hostname.endsWith('.alienfarmers.org');document.cookie=`${sharedLocaleCookie}=; Path=/; Max-Age=0; SameSite=Lax${secure}`;document.cookie=`${sharedLocaleCookie}=${value==='zh-CN'?'zh-Hans':value==='zh-TW'?'zh-Hant':value}; Path=/; Max-Age=31536000; SameSite=Lax${official?'; Domain=.alienfarmers.org':''}${secure}`;}
 // English is the stable message key. Customer-authored messages are never translated.
 const rows=`
 retail|สมาชิกทั่วไป|零售会员|零售會員|Розничный клиент
@@ -224,8 +228,8 @@ export function translate(key:string,locale:Locale){const clean=key.trim();const
 const Context=createContext({locale:'en' as Locale,t:(s:string)=>s,setLocale:(_v:Locale)=>{},agent:false});
 export function I18nProvider({children,agent=false}:{children:React.ReactNode;agent?:boolean}){
  const [locale,setState]=useState<Locale>('en');
- useEffect(()=>{const key=agent?'af-ops-language':'af-chat-language';let language:Locale='en';try{const saved=localStorage.getItem(key);if(saved&&saved in languages)language=saved as Locale;else{const n=navigator.language.toLowerCase();language=n.startsWith('th')?'th':n.startsWith('zh')?(n.includes('tw')||n.includes('hk')?'zh-TW':'zh-CN'):n.startsWith('ru')?'ru':'en';}}catch{}if(agent&&!['en','th','zh-CN'].includes(language))language=language==='zh-TW'?'zh-CN':'en';queueMicrotask(()=>setState(language));},[agent]);
- const setLocale=(value:Locale)=>{setState(value);try{localStorage.setItem(agent?'af-ops-language':'af-chat-language',value);}catch{}};
+ useEffect(()=>{const key=agent?'af-ops-language':'af-chat-language';let language:Locale='en';try{const shared=agent?null:cookieLocale(),saved=localStorage.getItem(key);if(shared)language=shared;else if(saved&&saved in languages)language=saved as Locale;else{const n=navigator.language.toLowerCase();language=n.startsWith('th')?'th':n.startsWith('zh')?(n.includes('tw')||n.includes('hk')?'zh-TW':'zh-CN'):n.startsWith('ru')?'ru':'en';}}catch{}if(agent&&!['en','th','zh-CN'].includes(language))language=language==='zh-TW'?'zh-CN':'en';queueMicrotask(()=>setState(language));},[agent]);
+ const setLocale=(value:Locale)=>{setState(value);try{localStorage.setItem(agent?'af-ops-language':'af-chat-language',value);if(!agent)persistSharedLocale(value);}catch{}};
  useEffect(()=>{document.documentElement.lang=locale;},[locale]);
  return <Context.Provider value={{locale,t:s=>translate(s,locale),setLocale,agent}}>{children}</Context.Provider>;
 }

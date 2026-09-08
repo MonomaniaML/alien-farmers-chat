@@ -31,6 +31,18 @@ void test('state-changing browser requests must be same-origin', () => {
   assert.equal(isSameOriginMutation(new Request('https://chat.alienfarmers.org/api/member/login', { headers: { origin: 'https://evil.example', 'sec-fetch-site': 'cross-site' } })), false);
 });
 
+void test('customer chat uses the shared member language cookie and locale aliases', async () => {
+  const [i18n, visitor] = await Promise.all([
+    readFile(new URL('../lib/support/i18n.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/support/visitor-terminal.tsx', import.meta.url), 'utf8'),
+  ]);
+  assert.match(i18n, /sharedLocaleCookie='af_locale'/);
+  assert.match(i18n, /Domain=\.alienfarmers\.org/);
+  assert.match(i18n, /zh-Hans/);
+  assert.match(i18n, /zh-Hant/);
+  assert.match(visitor, /memberLocale\(next\.preferredLocale\)/);
+});
+
 void test('registration presents date of birth as guided year, month and day segments', async () => {
   const source = await readFile(new URL('../components/member-profile-navigation.tsx', import.meta.url), 'utf8');
   assert.match(source, /className="member-birth-segments"/);
