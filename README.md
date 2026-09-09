@@ -91,6 +91,24 @@ node node_modules/vinext/dist/cli.js build
 
 No Supabase migration, Vercel configuration, domain, credential, or production customer was changed.
 
+## Floating chat widget
+
+`/widget` renders the reusable `FloatingChat` surface for a desktop, bottom-right
+chat experience. It shares the Conversation Center messages, drafts, keyword
+matching, quick replies and browser persistence. The route is suitable as the
+source of a fixed iframe served by `https://chat.alienfarmers.org/widget`; this
+repository intentionally does not change the Public page that will host it.
+
+The widget posts `{ type: 'alien-farmers-chat:state', open: boolean }` to its
+parent window so the host can resize the iframe between launcher and expanded
+dimensions. A trusted parent may send
+`{ type: 'alien-farmers-chat:command', action: 'open' | 'close' }` back to the
+iframe. No message or customer content is included in these events.
+
+The component supports dark and light palettes, persisted open state, unread
+badges, Escape-to-close with focus restoration, a non-modal dialog, loading,
+error and empty states, quick actions, and compact viewport limits.
+
 ### Validation performed on 2026-09-07
 
 Nine test groups pass, including the five-channel configuration, feedback visibility metadata, mock intent coverage, persistence, isolation, concurrent-send deduplication, and committed live events. TypeScript, focused lint, and the production compilation pass.

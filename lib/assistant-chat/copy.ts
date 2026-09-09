@@ -227,6 +227,18 @@ Product|สินค้า|产品|產品|Товар
 Quantity|จำนวน|数量|數量|Количество
 Location|สถานที่|地点|地點|Место
 Contact|ข้อมูลติดต่อ|联系方式|聯絡方式|Контакт
+Chat with us|แชทกับเรา|与我们聊天|與我們聊天|Напишите нам
+Open chat|เปิดแชท|打开聊天|開啟聊天|Открыть чат
+Close chat|ปิดแชท|关闭聊天|關閉聊天|Закрыть чат
+Minimize chat|ย่อหน้าต่างแชท|收起聊天|收起聊天|Свернуть чат
+Open full conversation center|เปิดศูนย์การสนทนาแบบเต็ม|打开完整对话中心|開啟完整對話中心|Открыть полный центр диалогов
+Opening chat…|กำลังเปิดแชท…|正在打开聊天…|正在開啟聊天…|Открываем чат…
+Your conversation will appear here in a moment.|การสนทนาจะปรากฏที่นี่ในอีกสักครู่|对话即将在这里显示。|對話即將在這裡顯示。|Диалог появится здесь через мгновение.
+Chat is unavailable|ไม่สามารถใช้งานแชทได้|聊天暂不可用|聊天暫不可用|Чат недоступен
+Please try again or open the full conversation center.|โปรดลองอีกครั้งหรือเปิดศูนย์การสนทนาแบบเต็ม|请重试或打开完整对话中心。|請重試或開啟完整對話中心。|Повторите попытку или откройте полный центр диалогов.
+Try again|ลองอีกครั้ง|重试|重試|Повторить
+How can we help?|ให้เราช่วยอะไรได้บ้าง|需要什么帮助？|需要什麼協助？|Чем мы можем помочь?
+Ask about products, stores, delivery, or contact Customer Support.|สอบถามสินค้า ร้านค้า การจัดส่ง หรือติดต่อฝ่ายบริการลูกค้า|可以咨询产品、门店、配送，或联系客户支持。|可以諮詢產品、門市、配送，或聯絡客戶支援。|Спросите о товарах, магазинах, доставке или свяжитесь с поддержкой.
 `;
 const COPY:Record<string,LocalizedCopy>=Object.fromEntries(rows.trim().split('\n').map(row=>{const [key,...values]=row.split('|');return [key,values as LocalizedCopy];}));
 export function assistantText(text:string,locale:ContentLanguage){
