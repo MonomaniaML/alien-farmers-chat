@@ -28,10 +28,12 @@ export function FloatingChat({
   initialOpen = false,
   availability = 'ready',
   restoreOpenState = true,
+  embedded = false,
 }: {
   initialOpen?: boolean;
   availability?: 'ready' | 'error';
   restoreOpenState?: boolean;
+  embedded?: boolean;
 }) {
   return (
     <I18nProvider>
@@ -39,6 +41,7 @@ export function FloatingChat({
         initialOpen={initialOpen}
         availability={availability}
         restoreOpenState={restoreOpenState}
+        embedded={embedded}
       />
     </I18nProvider>
   );
@@ -48,10 +51,12 @@ function FloatingChatSurface({
   initialOpen,
   availability,
   restoreOpenState,
+  embedded,
 }: {
   initialOpen: boolean;
   availability: 'ready' | 'error';
   restoreOpenState: boolean;
+  embedded: boolean;
 }) {
   const { locale } = useI18n();
   const copy = (text: string) => assistantText(text, locale);
@@ -170,7 +175,11 @@ function FloatingChatSurface({
   };
 
   return (
-    <div className={'af-floating-chat theme-' + theme}>
+    <div
+      className={
+        'af-floating-chat theme-' + theme + (embedded ? ' is-embedded' : '')
+      }
+    >
       {open && (
         <dialog
           open
@@ -306,7 +315,7 @@ function FloatingChatSurface({
         </dialog>
       )}
 
-      <button
+      {!embedded && <button
         ref={triggerRef}
         type="button"
         className={'af-floating-launcher ' + (open ? 'is-open' : '')}
@@ -322,7 +331,7 @@ function FloatingChatSurface({
             {Math.min(unread, 9)}
           </span>
         )}
-      </button>
+      </button>}
     </div>
   );
 }
