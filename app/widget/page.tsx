@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function WidgetPage() {
   return (
     <main className="af-floating-page">
-      <FloatingChat />
+      <FloatingChat initialOpen restoreOpenState={false} />
     </main>
   );
 }

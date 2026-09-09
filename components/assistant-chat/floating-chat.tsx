@@ -27,15 +27,18 @@ const themeStorageKey = 'af-floating-chat-theme:v1';
 export function FloatingChat({
   initialOpen = false,
   availability = 'ready',
+  restoreOpenState = true,
 }: {
   initialOpen?: boolean;
   availability?: 'ready' | 'error';
+  restoreOpenState?: boolean;
 }) {
   return (
     <I18nProvider>
       <FloatingChatSurface
         initialOpen={initialOpen}
         availability={availability}
+        restoreOpenState={restoreOpenState}
       />
     </I18nProvider>
   );
@@ -44,9 +47,11 @@ export function FloatingChat({
 function FloatingChatSurface({
   initialOpen,
   availability,
+  restoreOpenState,
 }: {
   initialOpen: boolean;
   availability: 'ready' | 'error';
+  restoreOpenState: boolean;
 }) {
   const { locale } = useI18n();
   const copy = (text: string) => assistantText(text, locale);
@@ -79,12 +84,15 @@ function FloatingChatSurface({
           new URLSearchParams(window.location.search).get('embed') === '1' ||
           (window.parent !== window && document.referrer !== '');
         if (!isEmbedded) setOpen(true);
-        else if (savedOpen === 'open' || savedOpen === 'closed')
+        else if (
+          restoreOpenState &&
+          (savedOpen === 'open' || savedOpen === 'closed')
+        )
           setOpen(savedOpen === 'open');
         setTheme(savedTheme === 'light' ? 'light' : 'dark');
       } catch {}
     });
-  }, []);
+  }, [restoreOpenState]);
 
   useEffect(() => {
     if (window.parent !== window)
