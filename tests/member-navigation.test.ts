@@ -37,10 +37,12 @@ void test('customer chat uses the shared member language cookie and locale alias
     readFile(new URL('../components/support/visitor-terminal.tsx', import.meta.url), 'utf8'),
   ]);
   assert.match(i18n, /sharedLocaleCookie='af_locale'/);
-  assert.match(i18n, /Domain=\.alienfarmers\.org/);
-  assert.match(i18n, /zh-Hans/);
-  assert.match(i18n, /zh-Hant/);
-  assert.match(visitor, /memberLocale\(next\.preferredLocale\)/);
+  assert.match(i18n, /localeOverrideCookie='af_locale_override'/);
+  assert.match(i18n, /normalized==='auto'/);
+  assert.match(i18n, /hasLocaleOverride\(\)/);
+  assert.match(i18n, /zh-hans/);
+  assert.match(i18n, /zh-hant/);
+  assert.match(visitor, /applyMemberPreference\(next\.preferredLocale\)/);
 });
 
 void test('registration presents date of birth as guided year, month and day segments', async () => {

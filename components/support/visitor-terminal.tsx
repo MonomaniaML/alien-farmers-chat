@@ -6,7 +6,7 @@ import { ASSISTANTS, assistantById, isAnonymousAssistantAvailable } from '@/lib/
 import { useAssistantCenter } from '@/hooks/use-assistant-center';
 import { ConversationList } from '@/components/assistant-chat/conversation-list';
 import { ChatWindow } from '@/components/assistant-chat/chat-window';
-import { I18nProvider, LanguagePicker, memberLocale, useI18n } from '@/lib/support/i18n';
+import { I18nProvider, LanguagePicker, useI18n } from '@/lib/support/i18n';
 import { assistantText } from '@/lib/assistant-chat/copy';
 import { BrandMark } from '@/components/brand-mark';
 import { MemberProfileNavigation, openMemberAuth } from '@/components/member-profile-navigation';
@@ -17,10 +17,10 @@ const accessKey='af-chat-access:v1';
 
 export function VisitorTerminal(){return <I18nProvider><ConversationCenter/></I18nProvider>;}
 function ConversationCenter(){
- const {locale,setLocale}=useI18n(),copy=(text:string)=>assistantText(text,locale),center=useAssistantCenter(),[theme,setTheme]=useState<'dark'|'light'>('dark'),[access,setAccess]=useState<VisitorAccess|null>(null),[gateOpen,setGateOpen]=useState(false),anonymous=access!=='member',candidateId=center.activeId||center.state.lastOpened,candidate=assistantById(candidateId)||ASSISTANTS[0],assistant=anonymous&&!isAnonymousAssistantAvailable(candidate)?ASSISTANTS[0]:candidate,selectedId=assistant.id,conversation=center.state.conversations[assistant.id],unreadMessageCount=Object.values(center.state.conversations).reduce((total,item)=>total+item.unread,0);
+ const {locale,applyMemberPreference}=useI18n(),copy=(text:string)=>assistantText(text,locale),center=useAssistantCenter(),[theme,setTheme]=useState<'dark'|'light'>('dark'),[access,setAccess]=useState<VisitorAccess|null>(null),[gateOpen,setGateOpen]=useState(false),anonymous=access!=='member',candidateId=center.activeId||center.state.lastOpened,candidate=assistantById(candidateId)||ASSISTANTS[0],assistant=anonymous&&!isAnonymousAssistantAvailable(candidate)?ASSISTANTS[0]:candidate,selectedId=assistant.id,conversation=center.state.conversations[assistant.id],unreadMessageCount=Object.values(center.state.conversations).reduce((total,item)=>total+item.unread,0);
  useEffect(()=>{queueMicrotask(()=>{try{setTheme(localStorage.getItem('af-chat-theme')==='light'?'light':'dark');}catch{}});},[]);
  function toggleTheme(){setTheme(current=>{const next=current==='dark'?'light':'dark';try{localStorage.setItem('af-chat-theme',next);}catch{}return next;});}
- function handleSession(next:MemberProfile|null){if(next){const preferred=memberLocale(next.preferredLocale);if(preferred!==locale)setLocale(preferred);setAccess('member');setGateOpen(false);try{localStorage.setItem(accessKey,'member');}catch{}return;}let saved:string|null=null;try{saved=localStorage.getItem(accessKey);}catch{}if(saved==='anonymous')setAccess('anonymous');else{setAccess(null);setGateOpen(true);}}
+ function handleSession(next:MemberProfile|null){if(next){applyMemberPreference(next.preferredLocale);setAccess('member');setGateOpen(false);try{localStorage.setItem(accessKey,'member');}catch{}return;}let saved:string|null=null;try{saved=localStorage.getItem(accessKey);}catch{}if(saved==='anonymous')setAccess('anonymous');else{setAccess(null);setGateOpen(true);}}
  function continueAnonymously(){setAccess('anonymous');setGateOpen(false);try{localStorage.setItem(accessKey,'anonymous');}catch{}}
  function authenticate(){setGateOpen(false);queueMicrotask(()=>openMemberAuth('login'));}
  function selectAssistant(id:string){const target=assistantById(id);if(anonymous&&target&&!isAnonymousAssistantAvailable(target)){openMemberAuth('login');return;}center.select(id);}

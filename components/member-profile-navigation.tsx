@@ -11,7 +11,7 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import type { Locale } from '@/lib/support/i18n';
+import { clearLocaleOverride, type Locale } from '@/lib/support/i18n';
 import type { MemberProfile } from '@/lib/member-navigation';
 
 export const MEMBER_AUTH_EVENT = 'alienfarmers:member-auth';
@@ -180,7 +180,7 @@ export function MemberProfileNavigation({
     }
     const body = mode === 'login'
       ? { email: form.get('email'), password: form.get('password') }
-      : { email: form.get('email'), password: form.get('password'), displayName: form.get('displayName'), dateOfBirth: form.get('dateOfBirth'), preferredLocale: locale };
+      : { email: form.get('email'), password: form.get('password'), displayName: form.get('displayName'), dateOfBirth: form.get('dateOfBirth'), preferredLocale: 'auto' };
     try {
       const response = await fetch(`${apiBase}/${mode}`, {
         method: 'POST',
@@ -195,6 +195,7 @@ export function MemberProfileNavigation({
         setMode('login');
       } else {
         const next = payload.data?.profile || null;
+        clearLocaleOverride();
         setProfile(next);
         onSessionChange?.(next);
         setOpen(false);

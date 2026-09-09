@@ -3,9 +3,13 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export type Locale='en'|'th'|'zh-CN'|'zh-TW'|'ru';
 export const languages:Record<Locale,string>={en:'English',th:'ไทย','zh-CN':'简体中文','zh-TW':'繁體中文',ru:'Русский'};
 const sharedLocaleCookie='af_locale';
-export function memberLocale(value?:string|null):Locale{const normalized=String(value||'').trim().toLowerCase();if(normalized==='zh-hans'||normalized==='zh-cn'||normalized==='zh')return 'zh-CN';if(normalized==='zh-hant'||normalized==='zh-tw'||normalized==='zh-hk')return 'zh-TW';if(normalized==='th'||normalized==='ru')return normalized;return 'en';}
-function cookieLocale(){const value=document.cookie.split(';').map(item=>item.trim()).find(item=>item.startsWith(`${sharedLocaleCookie}=`))?.split('=').slice(1).join('=');return value?memberLocale(decodeURIComponent(value)):null;}
-function persistSharedLocale(value:Locale){const secure=location.protocol==='https:'?'; Secure':'';const official=location.hostname==='alienfarmers.org'||location.hostname.endsWith('.alienfarmers.org');document.cookie=`${sharedLocaleCookie}=; Path=/; Max-Age=0; SameSite=Lax${secure}`;document.cookie=`${sharedLocaleCookie}=${value==='zh-CN'?'zh-Hans':value==='zh-TW'?'zh-Hant':value}; Path=/; Max-Age=31536000; SameSite=Lax${official?'; Domain=.alienfarmers.org':''}${secure}`;}
+const localeOverrideCookie='af_locale_override';
+function browserLocale():Locale{const value=(navigator.languages?.[0]||navigator.language||'en').toLowerCase();return value.startsWith('th')?'th':value.startsWith('zh')?(value.includes('tw')||value.includes('hk')||value.includes('mo')?'zh-TW':'zh-CN'):value.startsWith('ru')?'ru':'en';}
+export function memberLocale(value?:string|null):Locale{const normalized=String(value||'').trim().toLowerCase();if(normalized==='auto')return browserLocale();if(normalized==='zh-hans'||normalized==='zh-cn'||normalized==='zh')return 'zh-CN';if(normalized==='zh-hant'||normalized==='zh-tw'||normalized==='zh-hk')return 'zh-TW';if(normalized==='th'||normalized==='ru')return normalized;return 'en';}
+function cookieValue(name:string){const value=document.cookie.split(';').map(item=>item.trim()).find(item=>item.startsWith(`${name}=`))?.split('=').slice(1).join('=');return value?decodeURIComponent(value):null;}
+export function hasLocaleOverride(){return Boolean(cookieValue(localeOverrideCookie));}
+export function clearLocaleOverride(){const secure=location.protocol==='https:'?'; Secure':'';document.cookie=`${localeOverrideCookie}=; Path=/; Max-Age=0; SameSite=Lax${secure}`;}
+function persistLocaleOverride(value:Locale){const secure=location.protocol==='https:'?'; Secure':'';document.cookie=`${localeOverrideCookie}=${value}; Path=/; SameSite=Lax${secure}`;}
 // English is the stable message key. Customer-authored messages are never translated.
 const rows=`
 retail|สมาชิกทั่วไป|零售会员|零售會員|Розничный клиент
@@ -225,13 +229,14 @@ Shipped|จัดส่งแล้ว|已发货
 `;
 export const dictionary:Record<string,string[]> = Object.fromEntries(rows.trim().split('\n').map(row=>{const [key,...values]=row.split('|');return [key,values];}));
 export function translate(key:string,locale:Locale){const clean=key.trim();const index=['th','zh-CN','zh-TW','ru'].indexOf(locale);const value= index<0?clean:dictionary[clean]?.[index]||clean;return key.replace(clean,value);}
-const Context=createContext({locale:'en' as Locale,t:(s:string)=>s,setLocale:(_v:Locale)=>{},agent:false});
+const Context=createContext({locale:'en' as Locale,t:(s:string)=>s,setLocale:(_v:Locale)=>{},applyMemberPreference:(_v?:string|null)=>{},agent:false});
 export function I18nProvider({children,agent=false}:{children:React.ReactNode;agent?:boolean}){
  const [locale,setState]=useState<Locale>('en');
- useEffect(()=>{const key=agent?'af-ops-language':'af-chat-language';let language:Locale='en';try{const shared=agent?null:cookieLocale(),saved=localStorage.getItem(key);if(shared)language=shared;else if(saved&&saved in languages)language=saved as Locale;else{const n=navigator.language.toLowerCase();language=n.startsWith('th')?'th':n.startsWith('zh')?(n.includes('tw')||n.includes('hk')?'zh-TW':'zh-CN'):n.startsWith('ru')?'ru':'en';}}catch{}if(agent&&!['en','th','zh-CN'].includes(language))language=language==='zh-TW'?'zh-CN':'en';queueMicrotask(()=>setState(language));},[agent]);
- const setLocale=(value:Locale)=>{setState(value);try{localStorage.setItem(agent?'af-ops-language':'af-chat-language',value);if(!agent)persistSharedLocale(value);}catch{}};
+ useEffect(()=>{const key=agent?'af-ops-language':'af-chat-language';let language:Locale='en';try{const override=agent?null:cookieValue(localeOverrideCookie),preference=agent?null:cookieValue(sharedLocaleCookie),saved=localStorage.getItem(key);if(override)language=memberLocale(override);else if(preference)language=memberLocale(preference);else if(saved&&saved in languages)language=saved as Locale;else language=browserLocale();}catch{}if(agent&&!['en','th','zh-CN'].includes(language))language=language==='zh-TW'?'zh-CN':'en';queueMicrotask(()=>setState(language));},[agent]);
+ const setLocale=(value:Locale)=>{setState(value);try{localStorage.setItem(agent?'af-ops-language':'af-chat-language',value);if(!agent)persistLocaleOverride(value);}catch{}};
+ const applyMemberPreference=(value?:string|null)=>{if(!agent&&!hasLocaleOverride())setState(memberLocale(value));};
  useEffect(()=>{document.documentElement.lang=locale;},[locale]);
- return <Context.Provider value={{locale,t:s=>translate(s,locale),setLocale,agent}}>{children}</Context.Provider>;
+ return <Context.Provider value={{locale,t:s=>translate(s,locale),setLocale,applyMemberPreference,agent}}>{children}</Context.Provider>;
 }
 export function useI18n(){return useContext(Context);}
 export function LanguagePicker(){const {locale,setLocale,agent,t}=useI18n();return <select className="language-picker" aria-label={t('Language')} value={locale} onChange={e=>setLocale(e.target.value as Locale)}>{Object.entries(languages).filter(([key])=>!agent||['en','th','zh-CN'].includes(key)).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select>;}
