@@ -33,6 +33,7 @@ function PopoverContent({
         side={side}
         sideOffset={sideOffset}
         className="isolate z-50"
+        style={{ zIndex: 110 }}
       >
         <PopoverPrimitive.Popup
           data-slot="popover-content"

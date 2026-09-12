@@ -1,15 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Moon, Sun } from 'lucide-react';
 import { ASSISTANTS, assistantById, isAnonymousAssistantAvailable } from '@/lib/assistant-chat/config';
 import { useAssistantCenter } from '@/hooks/use-assistant-center';
 import { ConversationList } from '@/components/assistant-chat/conversation-list';
 import { ChatWindow } from '@/components/assistant-chat/chat-window';
-import { I18nProvider, LanguagePicker, useI18n } from '@/lib/support/i18n';
+import { I18nProvider, useI18n } from '@/lib/support/i18n';
 import { assistantText } from '@/lib/assistant-chat/copy';
 import { BrandMark } from '@/components/brand-mark';
-import { MemberProfileNavigation, openMemberAuth } from '@/components/member-profile-navigation';
+import { openMemberAuth } from '@/components/member-profile-navigation';
+import { PlatformNavigation } from '@/components/platform-navigation';
 import type { MemberProfile } from '@/lib/member-navigation';
 import { MemberAccessGate, type VisitorAccess } from '@/components/assistant-chat/member-access-gate';
 import { useCloudSupport } from '@/hooks/use-cloud-support';
@@ -28,7 +27,7 @@ function ConversationCenter(){
  if(!center.ready)return <main className="assistant-center-loading"><BrandMark interactive={false}/><p>{copy('Opening conversations…')}</p></main>;
  const send=()=>{if(assistant.id!=='customer-support'||!cloud.conversation){center.send(assistant.id,conversation.draft);return;}const body=conversation.draft;center.setDraft(assistant.id,'');void cloud.send(body).then(sent=>{if(!sent)center.setDraft(assistant.id,body);});};
  return <main className={'assistant-center theme-'+theme+' '+(center.mobileOpen?'mobile-chat-open':'mobile-list-open')}>
-  <header className="assistant-global-header"><div className="assistant-brand"><BrandMark/><Link href="/"><strong>ALIEN FARMERS</strong><small>{copy('Conversation Center')}</small></Link></div><div className="assistant-global-actions"><button className="assistant-theme-toggle" onClick={toggleTheme} aria-label={copy(theme==='dark'?'Light mode':'Dark mode')} title={copy(theme==='dark'?'Light mode':'Dark mode')}>{theme==='dark'?<Sun size={17}/>:<Moon size={17}/>}</button><LanguagePicker/><MemberProfileNavigation locale={locale} unreadMessageCount={unreadMessageCount} onSessionChange={handleSession} theme={theme}/></div></header>
+  <PlatformNavigation theme={theme} toggleTheme={toggleTheme} unreadMessageCount={unreadMessageCount} onSessionChange={handleSession}/>
   <div className="assistant-workspace">
    <ConversationList state={center.state} selectedId={selectedId} onSelect={selectAssistant} anonymous={anonymous} onLockedSelect={()=>openMemberAuth('login')}/>
    <div className="assistant-cloud-column">{assistant.id==='customer-support'&&cloud.error&&<div className="connection-banner"><span>{cloud.error}</span><button type="button" onClick={()=>void cloud.refresh()}>{copy('Retry')}</button></div>}<ChatWindow assistant={assistant} conversation={conversation} typing={assistant.id==='customer-support'?cloud.sending:center.typingId===assistant.id} newMessageId={center.newMessageId} supportOnline={assistant.id==='customer-support'?Boolean(cloud.conversation):center.state.supportOnline} onBack={center.back} onDraft={value=>center.setDraft(assistant.id,value)} onSend={send} onAction={item=>{if(anonymous&&(item.value==='delivery'||item.value==='wholesale')){openMemberAuth('login');return;}center.action(assistant.id,item);}} onToggleSupport={center.toggleSupport} cloudPersisted={assistant.id==='customer-support'&&Boolean(cloud.conversation)}/></div>
