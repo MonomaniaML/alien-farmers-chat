@@ -5,7 +5,7 @@ import {
 } from '@/lib/member-navigation';
 import { createMemberAssertion, readAppSession } from '@/lib/identity/session';
 
-const memberApi = 'https://api.alienfarmers.org/api/member';
+const memberApi = `${(process.env.DATABASE_API_ORIGIN || 'https://api.alienfarmers.org').replace(/\/+$/u, '')}/api/member`;
 
 export const dynamic = 'force-dynamic';
 

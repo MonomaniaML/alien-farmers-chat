@@ -19,9 +19,10 @@ void test('member proxy exposes only the navigation authentication surface', () 
   assert.equal(isAllowedMemberProxyRequest(['login', 'anything'], 'POST'), false);
 });
 
-void test('member cookies are shared only across official production subdomains', () => {
+void test('member cookies are isolated to the current platform parent domain', () => {
   const cookie = 'af_member_access=token; Path=/; HttpOnly; Secure; SameSite=Lax';
   assert.match(sharedMemberCookie(cookie, 'chat.alienfarmers.org'), /Domain=\.alienfarmers\.org$/);
+  assert.match(sharedMemberCookie(cookie, 'chat.staging.alienfarmers.org'), /Domain=\.staging\.alienfarmers\.org$/);
   assert.doesNotMatch(sharedMemberCookie(cookie, 'localhost'), /Secure|Domain=/);
   assert.doesNotMatch(sharedMemberCookie(cookie, 'preview.example'), /Domain=/);
 });

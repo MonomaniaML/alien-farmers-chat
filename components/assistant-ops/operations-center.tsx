@@ -19,6 +19,7 @@ import {
   Sun,
   UserRound,
 } from 'lucide-react';
+import { platformOrigins } from '@/lib/platform-environment';
 import { ASSISTANTS, canRoleAccess } from '@/lib/assistant-chat/config';
 import { assistantText } from '@/lib/assistant-chat/copy';
 import type {
@@ -261,7 +262,7 @@ function OperationsWorkspace() {
             {theme === 'light' ? <Moon size={17} /> : <Sun size={17} />}
           </button>
           <Link
-            href={isDevelopment ? '/' : 'https://chat.alienfarmers.org'}
+            href={isDevelopment ? '/' : platformOrigins.support}
             target="_blank"
           >
             {copy('Open customer view')}

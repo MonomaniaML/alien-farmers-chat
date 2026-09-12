@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/popover';
 import { clearLocaleOverride, type Locale } from '@/lib/support/i18n';
 import type { MemberProfile } from '@/lib/member-navigation';
+import { platformOrigins } from '@/lib/platform-environment';
 
 export const MEMBER_AUTH_EVENT = 'alienfarmers:member-auth';
 
@@ -74,7 +75,7 @@ function isValidBirthDate(value: FormDataEntryValue | null) {
 export function MemberProfileNavigation({
   locale,
   apiBase = '/api/member',
-  memberCenterUrl = 'https://member.alienfarmers.org',
+  memberCenterUrl = platformOrigins.member,
   unreadMessageCount = 0,
   unreadNotificationCount,
   orderCount,

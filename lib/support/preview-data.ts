@@ -17,7 +17,7 @@ export const ORDERS=[
 ];
 export const ORDER=ORDERS[0];
 export const CART=[{productId:'orbit-jar',quantity:2}];
-export function productUrl(id:string){return 'https://alienfarmers.org/products/'+id;}
+export function productUrl(id:string){const root=process.env.NEXT_PUBLIC_PLATFORM_ENV==='staging'?'staging.alienfarmers.org':'alienfarmers.org';return `https://${root}/products/${id}`;}
 export type InteractivePrompt={question:string;options:{label:string;value:string;detail?:string}[]};
 const promptPrefix='[af-options:';
 export function encodeInteractivePrompt(prompt:InteractivePrompt){return promptPrefix+encodeURIComponent(JSON.stringify(prompt))+']';}

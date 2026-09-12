@@ -25,9 +25,12 @@ export function sharedMemberCookie(value: string, hostname: string) {
   if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]') {
     return withoutDomain.replace(/;\s*Secure/gi, '').replace(/SameSite=None/gi, 'SameSite=Lax');
   }
-  if (hostname === 'alienfarmers.org' || hostname.endsWith('.alienfarmers.org')) {
-    return `${withoutDomain}; Domain=.alienfarmers.org`;
-  }
+  const domain = hostname === 'staging.alienfarmers.org' || hostname.endsWith('.staging.alienfarmers.org')
+    ? '.staging.alienfarmers.org'
+    : hostname === 'alienfarmers.org' || hostname.endsWith('.alienfarmers.org')
+      ? '.alienfarmers.org'
+      : '';
+  if (domain) return `${withoutDomain}; Domain=${domain}`;
   return withoutDomain;
 }
 

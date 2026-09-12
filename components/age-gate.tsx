@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { BrandMark } from '@/components/brand-mark';
 import { ageVerificationCookie, ageVerificationStorageKey } from '@/lib/age-verification';
+import { sharedCookieDomain } from '@/lib/platform-environment';
 import type { Locale } from '@/lib/support/i18n';
 
 const copy = {
@@ -14,7 +15,7 @@ const copy = {
 } satisfies Record<Locale, Record<string, string>>;
 
 function browserLocale(): Locale { const value = (navigator.languages?.[0] || navigator.language || 'en').toLowerCase(); return value.startsWith('th') ? 'th' : value.startsWith('zh') ? value.includes('tw') || value.includes('hk') || value.includes('mo') ? 'zh-TW' : 'zh-CN' : value.startsWith('ru') ? 'ru' : 'en'; }
-function ageCookie(remember: boolean) { const official = location.hostname === 'alienfarmers.org' || location.hostname.endsWith('.alienfarmers.org'); return `${ageVerificationCookie}=yes; Path=/${official ? '; Domain=.alienfarmers.org' : ''}${remember ? '; Max-Age=31536000' : ''}; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`; }
+function ageCookie(remember: boolean) { const domain = sharedCookieDomain(location.hostname); return `${ageVerificationCookie}=yes; Path=/${domain ? `; Domain=${domain}` : ''}${remember ? '; Max-Age=31536000' : ''}; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`; }
 
 export function AgeGate({ initiallyVerified, bypass, children }: { initiallyVerified: boolean; bypass?: boolean; children: ReactNode }) {
   const [verified, setVerified] = useState(initiallyVerified || Boolean(bypass));
