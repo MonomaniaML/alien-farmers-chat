@@ -164,6 +164,11 @@ export function MemberProfileNavigation({
 
   async function submit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (mode === 'login') {
+      const returnTo = `${window.location.pathname}${window.location.search}`;
+      window.location.assign(`/auth/login?returnTo=${encodeURIComponent(returnTo)}`);
+      return;
+    }
     setBusy(true);
     setError('');
     setNotice('');
@@ -178,11 +183,9 @@ export function MemberProfileNavigation({
       setBusy(false);
       return;
     }
-    const body = mode === 'login'
-      ? { email: form.get('email'), password: form.get('password') }
-      : { email: form.get('email'), password: form.get('password'), displayName: form.get('displayName'), dateOfBirth: form.get('dateOfBirth'), preferredLocale: 'auto' };
+    const body = { email: form.get('email'), password: form.get('password'), displayName: form.get('displayName'), dateOfBirth: form.get('dateOfBirth'), preferredLocale: 'auto' };
     try {
-      const response = await fetch(`${apiBase}/${mode}`, {
+      const response = await fetch(`${apiBase}/register`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -238,13 +241,13 @@ export function MemberProfileNavigation({
             <button className={mode === 'register' ? 'active' : ''} onClick={() => { setMode('register'); setError(''); }}>{words.register}</button>
           </div>
           <form className="member-auth-form" onSubmit={submit}>
-            {mode === 'register' && <>
+            {mode === 'register' ? <>
               <label>{words.name}<input name="displayName" autoComplete="name" required /></label>
               <BirthDateField words={words} />
-            </>}
-            <label>{words.email}<input name="email" type="email" autoComplete="email" required /></label>
-            <PasswordField label={words.password} name="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} words={words} />
-            {mode === 'register' && <PasswordField label={words.confirmPassword} name="confirmPassword" autoComplete="new-password" words={words} />}
+              <label>{words.email}<input name="email" type="email" autoComplete="email" required /></label>
+              <PasswordField label={words.password} name="password" autoComplete="new-password" words={words} />
+              <PasswordField label={words.confirmPassword} name="confirmPassword" autoComplete="new-password" words={words} />
+            </> : null}
             {notice && <p className="member-auth-notice">{notice}</p>}
             {error && <p className="member-auth-error" role="alert">{error}</p>}
             <button className="member-auth-submit" type="submit" disabled={busy}>{busy ? <><LoaderCircle size={17} />{words.loading}</> : mode === 'login' ? words.submitLogin : words.submitRegister}</button>

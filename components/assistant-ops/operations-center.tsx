@@ -238,9 +238,6 @@ function OperationsWorkspace() {
           </Link>
         </div>
         <div className="assistant-ops-actions">
-          <span className="assistant-ops-test-data">
-            {copy(isDevelopment ? 'Local preview' : 'Test data')}
-          </span>
           <LanguagePicker />
           <label>
             {copy('Role preview')}

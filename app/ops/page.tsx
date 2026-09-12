@@ -1,3 +1,3 @@
-import { OpsInbox } from '@/components/support/ops-inbox';
-export const metadata={title:'Inbox · Alien Farmers Operations'};
-export default function Operations(){return <OpsInbox/>;}
+import { redirect } from 'next/navigation';
+import { staffSupportUrl } from '@/lib/support/staff-origin';
+export default function Operations(){redirect(staffSupportUrl());}

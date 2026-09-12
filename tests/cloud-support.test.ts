@@ -1,0 +1,7 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import test from 'node:test';
+const read=(path:string)=>readFile(new URL(`../${path}`,import.meta.url),'utf8');
+void test('customer support uses a server-only integration and stable signed visitor identity',async()=>{const [session,route,hook]=await Promise.all([read('lib/support/cloud-session.ts'),read('app/api/support/conversation/[id]/messages/route.ts'),read('hooks/use-cloud-support.ts')]);assert.match(session,/CHAT_SERVICE_TOKEN/);assert.match(session,/CHAT_VISITOR_COOKIE='af_chat_visitor'/);assert.match(session,/HttpOnly; SameSite=Lax/);assert.match(route,/isSameOrigin/);assert.match(hook,/setInterval\(\(\)=>void refresh\(\),3000\)/);});
+void test('only the customer-support channel is replaced by persisted support messages',async()=>{const view=await read('components/support/visitor-terminal.tsx');assert.match(view,/assistant\.id==='customer-support'&&cloud\.conversation/);assert.match(view,/assistant\.id!==\'customer-support\'/);});
+void test('legacy Chat operations routes hand off to the Staff support workspace',async()=>{const [home,ops,settings,target]=await Promise.all([read('app/page.tsx'),read('app/ops/page.tsx'),read('app/ops/settings/page.tsx'),read('lib/support/staff-origin.ts')]);assert.doesNotMatch(home,/ops\.alienfarmers\.org|OpsInbox/);assert.match(ops,/redirect\(staffSupportUrl\(\)\)/);assert.match(settings,/redirect\(staffSupportUrl\(\)\)/);assert.match(target,/staff\.alienfarmers\.org/);});

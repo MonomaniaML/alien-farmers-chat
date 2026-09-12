@@ -3,6 +3,7 @@ import {
   isSameOriginMutation,
   sharedMemberCookie,
 } from '@/lib/member-navigation';
+import { createMemberAssertion, readAppSession } from '@/lib/identity/session';
 
 const memberApi = 'https://api.alienfarmers.org/api/member';
 
@@ -28,6 +29,9 @@ async function proxyMember(request: Request, context: { params: Promise<{ path: 
     const cookie = request.headers.get('cookie');
     if (contentType) headers.set('Content-Type', contentType);
     if (cookie) headers.set('Cookie', cookie);
+    const appSession = readAppSession(request);
+    const assertion = appSession ? createMemberAssertion(appSession) : null;
+    if (assertion) headers.set('X-AF-Member-Assertion', assertion);
 
     const response = await fetch(upstream, {
       method: request.method,
