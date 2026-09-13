@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import './redesign.css';
+import './platform-shell.css';
 import './age-gate.css';
 import { headers } from 'next/headers';
 import { AgeGate } from '@/components/age-gate';

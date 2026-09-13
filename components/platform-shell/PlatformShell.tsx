@@ -1,0 +1,78 @@
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
+
+export const PLATFORM_SHELL_VERSION = "0.1.0";
+
+export type PlatformRouteKey = "home" | "archive" | "verify" | "member" | "drop" | "social" | "support";
+export type PlatformLocale = "en" | "th" | "zh-CN" | "zh-TW" | "ru";
+export type PlatformOrigins = { website: string; verify: string; member: string; drop: string; social: string; support: string };
+
+const labels: Record<PlatformLocale, Record<PlatformRouteKey | "theme" | "soon" | "close" | "archiveTab" | "verifyTab" | "me", string>> = {
+  en: { home: "Home", archive: "Product archive", verify: "Product verification", member: "Member center", drop: "Drop rewards", social: "Community / Forum", support: "Customer support", theme: "Appearance", soon: "SOON", close: "Close menu", archiveTab: "Archive", verifyTab: "Verify", me: "Me" },
+  th: { home: "หน้าหลัก", archive: "คลังข้อมูลสินค้า", verify: "ตรวจสอบสินค้า", member: "ศูนย์สมาชิก", drop: "รางวัลดรอป", social: "ชุมชน / ฟอรัม", support: "ฝ่ายช่วยเหลือ", theme: "ธีม", soon: "เร็ว ๆ นี้", close: "ปิดเมนู", archiveTab: "คลัง", verifyTab: "ตรวจสอบ", me: "ฉัน" },
+  "zh-CN": { home: "首页", archive: "产品档案", verify: "产品验证", member: "会员中心", drop: "掉落奖励", social: "社区 / 论坛", support: "客服支持", theme: "明暗模式", soon: "即将开放", close: "关闭菜单", archiveTab: "档案", verifyTab: "验证", me: "我的" },
+  "zh-TW": { home: "首頁", archive: "產品檔案", verify: "產品驗證", member: "會員中心", drop: "掉落獎勵", social: "社群 / 論壇", support: "客服支援", theme: "明暗模式", soon: "即將開放", close: "關閉選單", archiveTab: "檔案", verifyTab: "驗證", me: "我的" },
+  ru: { home: "Главная", archive: "Архив продуктов", verify: "Проверка продукта", member: "Центр участника", drop: "Награды Drop", social: "Сообщество / Форум", support: "Поддержка", theme: "Тема", soon: "СКОРО", close: "Закрыть меню", archiveTab: "Архив", verifyTab: "Проверка", me: "Профиль" },
+};
+
+const paths: Record<PlatformRouteKey, ReactNode> = {
+  home: <path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z" />,
+  archive: <path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6" />,
+  verify: <path d="M8 3H4v4M16 3h4v4M8 21H4v-4M16 21h4v-4m-11-5 2 2 4-5" />,
+  member: <><circle cx="12" cy="8" r="4" /><path d="M4 21c.5-5 3-7 8-7s7.5 2 8 7" /></>,
+  drop: <path d="M5 7h14v14H5zM9 7V4h6v3m-6 5h6m-3-3v6" />,
+  social: <><circle cx="8" cy="9" r="3" /><circle cx="16" cy="8" r="3" /><path d="M2 20c.5-4 2.5-6 6-6s5.5 2 6 6m-1-5c1-.8 2-1 3-1 3.5 0 5.5 2 6 6" /></>,
+  support: <path d="M5 13v-2a7 7 0 0 1 14 0v2M5 12H3v6h4v-6m12 0h2v6h-4v-6m0 7c-1 1.3-2.6 2-5 2" />,
+};
+
+function LineIcon({ kind }: { kind: PlatformRouteKey }) {
+  return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[kind]}</svg>;
+}
+
+export type PlatformShellProps = {
+  locale: PlatformLocale;
+  activeKey: PlatformRouteKey;
+  origins: PlatformOrigins;
+  renderBrandMark: (placement: "header" | "drawer") => ReactNode;
+  renderFeatureIcon: (key: PlatformRouteKey) => ReactNode;
+  desktopActions: ReactNode;
+  drawerThemeControl: ReactNode;
+  accent?: "lime" | "verify";
+  upcoming?: PlatformRouteKey[];
+  className?: string;
+};
+
+export function PlatformShell({ locale, activeKey, origins, renderBrandMark, renderFeatureIcon, desktopActions, drawerThemeControl, accent = "lime", upcoming = ["social"], className = "" }: PlatformShellProps) {
+  const [open, setOpen] = useState(false);
+  const copy = labels[locale];
+  const routes: ReadonlyArray<[PlatformRouteKey, string]> = [
+    ["home", origins.website], ["archive", `${origins.website}/flowers`], ["verify", origins.verify],
+    ["member", origins.member], ["drop", origins.drop], ["social", origins.social], ["support", origins.support],
+  ];
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    const close = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", close);
+    return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", close); };
+  }, [open]);
+  return <>
+    <header className={`af-platform-shell af-platform-shell--${accent} ${className}`.trim()} data-platform-shell-version={PLATFORM_SHELL_VERSION}>
+      <div className="af-platform-shell__main">
+        <button className={`af-platform-shell__menu${open ? " open" : ""}`} type="button" onClick={() => setOpen(value => !value)} aria-expanded={open} aria-label="Menu"><i /><i /><i /></button>
+        <div className="af-platform-shell__brand">{renderBrandMark("header")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div>
+        <div className="af-platform-shell__actions">{desktopActions}</div>
+      </div>
+      <nav className="af-platform-shell__shortcuts" aria-label="Quick access">{routes.slice(1).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{copy[key]}</span>{upcoming.includes(key) ? <small>{copy.soon}</small> : null}</a>)}</nav>
+    </header>
+    <aside className={`af-platform-shell__drawer af-platform-shell__drawer--${accent}${open ? " open" : ""}`} aria-hidden={!open}>
+      <div className="af-platform-shell__drawer-head"><div className="af-platform-shell__brand">{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div><button type="button" onClick={() => setOpen(false)} aria-label={copy.close}>×</button></div>
+      <nav>{routes.map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}>{renderFeatureIcon(key)}<span>{copy[key]}</span>{upcoming.includes(key) ? <small>{copy.soon}</small> : null}</a>)}</nav>
+      <div className="af-platform-shell__drawer-theme"><span>{copy.theme}</span>{drawerThemeControl}</div>
+    </aside>
+    {open ? <button className="af-platform-shell__scrim" type="button" onPointerDown={() => setOpen(false)} onClick={() => setOpen(false)} aria-label={copy.close} /> : null}
+    <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary navigation">{routes.slice(0, 4).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
+  </>;
+}

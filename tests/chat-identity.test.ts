@@ -29,17 +29,19 @@ void test('Chat uses the common age confirmation independently from member login
 });
 
 void test('Chat customer pages use the shared platform shell and current-tab member flow', async () => {
-  const [navigation, terminal, member] = await Promise.all([
+  const [navigation, terminal, member, shell] = await Promise.all([
     read('components/platform-navigation.tsx'),
     read('components/support/visitor-terminal.tsx'),
     read('components/member-profile-navigation.tsx'),
+    read('components/platform-shell/PlatformShell.tsx'),
   ]);
   assert.match(terminal, /<PlatformNavigation/);
-  assert.match(navigation, /platform-global-shortcuts/);
-  assert.match(navigation, /platform-global-drawer/);
-  assert.match(navigation, /platform-global-mobile/);
+  assert.match(navigation, /<PlatformShell/);
+  assert.match(shell, /af-platform-shell__shortcuts/);
+  assert.match(shell, /af-platform-shell__drawer/);
+  assert.match(shell, /af-platform-shell__mobile/);
   assert.match(navigation, /<PlatformIcon type=\{key\}/);
-  assert.match(navigation, /platformOrigins\.support/);
+  assert.match(navigation, /origins=\{platformOrigins\}/);
   assert.match(member, /window\.location\.assign\(`\/auth\/login/);
   assert.match(member, /member-summary-popover/);
 });
