@@ -2,10 +2,11 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 
-export const PLATFORM_SHELL_VERSION = "0.1.2";
+export const PLATFORM_SHELL_VERSION = "0.1.3";
 
 export type PlatformRouteKey = "home" | "archive" | "verify" | "member" | "drop" | "social" | "support";
 export type PlatformLocale = "en" | "th" | "zh-CN" | "zh-TW" | "ru";
+export type PlatformAccountIconKind = "messages" | "notifications";
 export type PlatformOrigins = { website: string; verify: string; member: string; drop: string; social: string; support: string };
 
 const labels: Record<PlatformLocale, Record<PlatformRouteKey | "theme" | "soon" | "close" | "archiveTab" | "verifyTab" | "me", string>> = {
@@ -28,6 +29,10 @@ const paths: Record<PlatformRouteKey, ReactNode> = {
 
 function LineIcon({ kind }: { kind: PlatformRouteKey }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[kind]}</svg>;
+}
+
+export function PlatformAccountIcon({ kind }: { kind: PlatformAccountIconKind }) {
+  return <svg viewBox="0 0 24 24" aria-hidden="true">{kind === "messages" ? <><path d="M3 5h18v14H3Z" /><path d="m3 6 9 7 9-7" /></> : <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" /></>}</svg>;
 }
 
 export type PlatformShellProps = {

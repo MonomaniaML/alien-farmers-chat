@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode, type RefObject, type SyntheticEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bell, CalendarDays, Eye, EyeOff, LoaderCircle, ShoppingBag } from 'lucide-react';
+import { CalendarDays, Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -15,6 +15,7 @@ import {
 import { clearLocaleOverride, type Locale } from '@/lib/support/i18n';
 import type { MemberProfile } from '@/lib/member-navigation';
 import { platformOrigins } from '@/lib/platform-environment';
+import { PlatformAccountIcon } from '@/components/platform-shell/PlatformShell';
 
 export const MEMBER_AUTH_EVENT = 'alienfarmers:member-auth';
 
@@ -28,11 +29,11 @@ export function openMemberAuth(mode: 'login' | 'register' = 'login') {
 }
 
 const copy = {
-  en: { login: 'Sign in', register: 'Register', email: 'Email', password: 'Password', confirmPassword: 'Confirm password', passwordMismatch: 'The passwords do not match.', name: 'Display name', birth: 'Date of birth', birthFormat: 'Enter as YYYY - MM - DD', birthInvalid: 'Enter a valid date of birth in YYYY-MM-DD format.', year: 'Year', month: 'Month', day: 'Day', submitLogin: 'Sign in', submitRegister: 'Create account', loading: 'Connecting…', real: 'Use your ALIEN FARMERS member account.', confirm: 'Account created. Check your email to confirm it, then sign in.', profile: 'Member center', notifications: 'Messages and notifications', orders: 'Current orders', openCenter: 'Open member center', signOut: 'Sign out', showPassword: 'Show password', hidePassword: 'Hide password', failed: 'Please check your details and try again.' },
-  th: { login: 'เข้าสู่ระบบ', register: 'สมัครสมาชิก', email: 'อีเมล', password: 'รหัสผ่าน', confirmPassword: 'ยืนยันรหัสผ่าน', passwordMismatch: 'รหัสผ่านไม่ตรงกัน', name: 'ชื่อที่แสดง', birth: 'วันเกิด', birthFormat: 'กรอกแบบ ปปปป - ดด - วว', birthInvalid: 'กรุณากรอกวันเกิดที่ถูกต้องในรูปแบบ ปปปป-ดด-วว', year: 'ปี', month: 'เดือน', day: 'วัน', submitLogin: 'เข้าสู่ระบบ', submitRegister: 'สร้างบัญชี', loading: 'กำลังเชื่อมต่อ…', real: 'ใช้บัญชีสมาชิก ALIEN FARMERS ของคุณ', confirm: 'สร้างบัญชีแล้ว โปรดยืนยันทางอีเมล แล้วเข้าสู่ระบบ', profile: 'ศูนย์สมาชิก', notifications: 'ข้อความและการแจ้งเตือน', orders: 'คำสั่งซื้อปัจจุบัน', openCenter: 'เปิดศูนย์สมาชิก', signOut: 'ออกจากระบบ', showPassword: 'แสดงรหัสผ่าน', hidePassword: 'ซ่อนรหัสผ่าน', failed: 'โปรดตรวจสอบข้อมูลแล้วลองอีกครั้ง' },
-  'zh-CN': { login: '登录', register: '注册', email: '邮箱', password: '密码', confirmPassword: '确认密码', passwordMismatch: '两次输入的密码不一致。', name: '显示名称', birth: '出生日期', birthFormat: '请按 年年年年 - 月月 - 日日 输入', birthInvalid: '请输入有效的出生日期，格式为 年年年年-月月-日日。', year: '年', month: '月', day: '日', submitLogin: '登录', submitRegister: '创建账户', loading: '正在连接…', real: '使用你的 ALIEN FARMERS 会员账号。', confirm: '账户已创建，请查收确认邮件，然后登录。', profile: '会员中心', notifications: '消息与通知', orders: '当前订单', openCenter: '进入会员中心', signOut: '退出登录', showPassword: '显示密码', hidePassword: '隐藏密码', failed: '请检查填写内容后重试。' },
-  'zh-TW': { login: '登入', register: '註冊', email: '電子郵件', password: '密碼', confirmPassword: '確認密碼', passwordMismatch: '兩次輸入的密碼不一致。', name: '顯示名稱', birth: '出生日期', birthFormat: '請按 年年年年 - 月月 - 日日 輸入', birthInvalid: '請輸入有效的出生日期，格式為 年年年年-月月-日日。', year: '年', month: '月', day: '日', submitLogin: '登入', submitRegister: '建立帳戶', loading: '正在連線…', real: '使用你的 ALIEN FARMERS 會員帳戶。', confirm: '帳戶已建立，請查收確認郵件，然後登入。', profile: '會員中心', notifications: '訊息與通知', orders: '目前訂單', openCenter: '進入會員中心', signOut: '登出', showPassword: '顯示密碼', hidePassword: '隱藏密碼', failed: '請檢查填寫內容後重試。' },
-  ru: { login: 'Войти', register: 'Регистрация', email: 'Эл. почта', password: 'Пароль', confirmPassword: 'Повторите пароль', passwordMismatch: 'Пароли не совпадают.', name: 'Отображаемое имя', birth: 'Дата рождения', birthFormat: 'Введите ГГГГ - ММ - ДД', birthInvalid: 'Введите действительную дату в формате ГГГГ-ММ-ДД.', year: 'Год', month: 'Месяц', day: 'День', submitLogin: 'Войти', submitRegister: 'Создать аккаунт', loading: 'Подключение…', real: 'Используйте свою учётную запись ALIEN FARMERS.', confirm: 'Аккаунт создан. Подтвердите email, затем войдите.', profile: 'Центр участника', notifications: 'Сообщения и уведомления', orders: 'Текущие заказы', openCenter: 'Открыть центр', signOut: 'Выйти', showPassword: 'Показать пароль', hidePassword: 'Скрыть пароль', failed: 'Проверьте данные и повторите попытку.' },
+  en: { login: 'Sign in', register: 'Register', email: 'Email', password: 'Password', confirmPassword: 'Confirm password', passwordMismatch: 'The passwords do not match.', name: 'Display name', birth: 'Date of birth', birthFormat: 'Enter as YYYY - MM - DD', birthInvalid: 'Enter a valid date of birth in YYYY-MM-DD format.', year: 'Year', month: 'Month', day: 'Day', submitLogin: 'Sign in', submitRegister: 'Create account', loading: 'Connecting…', real: 'Use your ALIEN FARMERS member account.', confirm: 'Account created. Check your email to confirm it, then sign in.', profile: 'Member center', notifications: 'Notifications', messages: 'Messages', openCenter: 'Open member center', signOut: 'Sign out', showPassword: 'Show password', hidePassword: 'Hide password', failed: 'Please check your details and try again.' },
+  th: { login: 'เข้าสู่ระบบ', register: 'สมัครสมาชิก', email: 'อีเมล', password: 'รหัสผ่าน', confirmPassword: 'ยืนยันรหัสผ่าน', passwordMismatch: 'รหัสผ่านไม่ตรงกัน', name: 'ชื่อที่แสดง', birth: 'วันเกิด', birthFormat: 'กรอกแบบ ปปปป - ดด - วว', birthInvalid: 'กรุณากรอกวันเกิดที่ถูกต้องในรูปแบบ ปปปป-ดด-วว', year: 'ปี', month: 'เดือน', day: 'วัน', submitLogin: 'เข้าสู่ระบบ', submitRegister: 'สร้างบัญชี', loading: 'กำลังเชื่อมต่อ…', real: 'ใช้บัญชีสมาชิก ALIEN FARMERS ของคุณ', confirm: 'สร้างบัญชีแล้ว โปรดยืนยันทางอีเมล แล้วเข้าสู่ระบบ', profile: 'ศูนย์สมาชิก', notifications: 'การแจ้งเตือน', messages: 'ข้อความ', openCenter: 'เปิดศูนย์สมาชิก', signOut: 'ออกจากระบบ', showPassword: 'แสดงรหัสผ่าน', hidePassword: 'ซ่อนรหัสผ่าน', failed: 'โปรดตรวจสอบข้อมูลแล้วลองอีกครั้ง' },
+  'zh-CN': { login: '登录', register: '注册', email: '邮箱', password: '密码', confirmPassword: '确认密码', passwordMismatch: '两次输入的密码不一致。', name: '显示名称', birth: '出生日期', birthFormat: '请按 年年年年 - 月月 - 日日 输入', birthInvalid: '请输入有效的出生日期，格式为 年年年年-月月-日日。', year: '年', month: '月', day: '日', submitLogin: '登录', submitRegister: '创建账户', loading: '正在连接…', real: '使用你的 ALIEN FARMERS 会员账号。', confirm: '账户已创建，请查收确认邮件，然后登录。', profile: '会员中心', notifications: '提醒', messages: '消息', openCenter: '进入会员中心', signOut: '退出登录', showPassword: '显示密码', hidePassword: '隐藏密码', failed: '请检查填写内容后重试。' },
+  'zh-TW': { login: '登入', register: '註冊', email: '電子郵件', password: '密碼', confirmPassword: '確認密碼', passwordMismatch: '兩次輸入的密碼不一致。', name: '顯示名稱', birth: '出生日期', birthFormat: '請按 年年年年 - 月月 - 日日 輸入', birthInvalid: '請輸入有效的出生日期，格式為 年年年年-月月-日日。', year: '年', month: '月', day: '日', submitLogin: '登入', submitRegister: '建立帳戶', loading: '正在連線…', real: '使用你的 ALIEN FARMERS 會員帳戶。', confirm: '帳戶已建立，請查收確認郵件，然後登入。', profile: '會員中心', notifications: '提醒', messages: '訊息', openCenter: '進入會員中心', signOut: '登出', showPassword: '顯示密碼', hidePassword: '隱藏密碼', failed: '請檢查填寫內容後重試。' },
+  ru: { login: 'Войти', register: 'Регистрация', email: 'Эл. почта', password: 'Пароль', confirmPassword: 'Повторите пароль', passwordMismatch: 'Пароли не совпадают.', name: 'Отображаемое имя', birth: 'Дата рождения', birthFormat: 'Введите ГГГГ - ММ - ДД', birthInvalid: 'Введите действительную дату в формате ГГГГ-ММ-ДД.', year: 'Год', month: 'Месяц', day: 'День', submitLogin: 'Войти', submitRegister: 'Создать аккаунт', loading: 'Подключение…', real: 'Используйте свою учётную запись ALIEN FARMERS.', confirm: 'Аккаунт создан. Подтвердите email, затем войдите.', profile: 'Центр участника', notifications: 'Уведомления', messages: 'Сообщения', openCenter: 'Открыть центр', signOut: 'Выйти', showPassword: 'Показать пароль', hidePassword: 'Скрыть пароль', failed: 'Проверьте данные и повторите попытку.' },
 } satisfies Record<Locale, Record<string, string>>;
 
 function AlienGlyph({ filled }: { filled: boolean }) {
@@ -45,9 +46,7 @@ function AlienGlyph({ filled }: { filled: boolean }) {
 }
 
 type AuthResponse = { data?: { authenticated?: boolean; profile?: MemberProfile; requiresEmailConfirmation?: boolean }; error?: { message?: string } };
-type OrdersResponse = { data?: Array<{ status?: string }>; meta?: { totalPages?: number } };
 type NotificationsResponse = { meta?: { unreadCount?: number } };
-const activeOrderStatuses = new Set(['new', 'confirmed', 'payment_received', 'preparing', 'shipped']);
 
 function PasswordField({ label, name, autoComplete, words }: { label: string; name: string; autoComplete: string; words: Record<string, string> }) {
   const [visible, setVisible] = useState(false);
@@ -84,7 +83,6 @@ export function MemberProfileNavigation({
   memberCenterUrl = platformOrigins.member,
   unreadMessageCount = 0,
   unreadNotificationCount,
-  orderCount,
   onSessionChange,
   theme = 'dark',
 }: {
@@ -93,7 +91,6 @@ export function MemberProfileNavigation({
   memberCenterUrl?: string;
   unreadMessageCount?: number;
   unreadNotificationCount?: number;
-  orderCount?: number;
   onSessionChange?: (profile: MemberProfile | null) => void;
   theme?: 'dark' | 'light';
 }) {
@@ -101,13 +98,12 @@ export function MemberProfileNavigation({
   const [profile, setProfile] = useState<MemberProfile | null>(null);
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
-  const [quickOpen, setQuickOpen] = useState<'orders' | 'notifications' | 'profile' | null>(null);
+  const [quickOpen, setQuickOpen] = useState<'messages' | 'notifications' | 'profile' | null>(null);
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [avatarFailed, setAvatarFailed] = useState(false);
-  const [remoteOrderCount, setRemoteOrderCount] = useState(0);
   const [remoteNotificationCount, setRemoteNotificationCount] = useState(0);
   const onSessionChangeRef = useRef(onSessionChange);
 
@@ -141,24 +137,6 @@ export function MemberProfileNavigation({
     window.addEventListener(MEMBER_AUTH_EVENT, listener);
     return () => window.removeEventListener(MEMBER_AUTH_EVENT, listener);
   }, []);
-
-  useEffect(() => {
-    if (!profile || orderCount !== undefined) return;
-    let active = true;
-    void (async () => {
-      let page = 1, totalPages = 1, count = 0;
-      do {
-        const response = await fetch(`${apiBase}/orders?page=${page}&limit=50`, { credentials: 'include', cache: 'no-store' });
-        if (!response.ok) return;
-        const payload = (await response.json()) as OrdersResponse;
-        count += (payload.data || []).filter(order => activeOrderStatuses.has(order.status || '')).length;
-        totalPages = Math.max(1, payload.meta?.totalPages || 1);
-        page += 1;
-      } while (page <= totalPages && active);
-      if (active) setRemoteOrderCount(count);
-    })().catch(() => {});
-    return () => { active = false; };
-  }, [apiBase, orderCount, profile]);
 
   useEffect(() => {
     if (!profile || unreadNotificationCount !== undefined) return;
@@ -220,11 +198,11 @@ export function MemberProfileNavigation({
 
   const authenticated = Boolean(profile);
   const avatar = profile?.avatarUrl && !avatarFailed;
-  const unreadCount = Math.max(0, unreadMessageCount) + Math.max(0, unreadNotificationCount ?? remoteNotificationCount);
-  const displayedOrderCount = Math.max(0, orderCount ?? remoteOrderCount);
+  const messageCount = Math.max(0, unreadMessageCount);
+  const notificationCount = Math.max(0, unreadNotificationCount ?? remoteNotificationCount);
   const memberUrl = memberCenterUrl.replace(/\/$/, '');
   const shortcut = (kind: Exclude<typeof quickOpen, null>, label: string, icon: ReactNode, count?: number) => <Popover open={quickOpen === kind} onOpenChange={next => setQuickOpen(next ? kind : null)}>
-    <PopoverTrigger render={<button className={kind === 'orders' ? 'member-order-link' : kind === 'notifications' ? 'member-bell' : 'member-avatar-link'} aria-label={`${label}${count === undefined ? '' : `: ${count}`}`} title={label} />}>
+    <PopoverTrigger render={<button className={kind === 'messages' ? 'member-message-link' : kind === 'notifications' ? 'member-bell' : 'member-avatar-link'} aria-label={`${label}${count === undefined ? '' : `: ${count}`}`} title={label} onClick={() => { if (!authenticated) openMemberAuth('login'); }} />}>
       {icon}{count !== undefined && count > 0 ? <span className="member-unread-badge">{count > 99 ? '99+' : count}</span> : null}
     </PopoverTrigger>
     <PopoverContent className={`member-summary-popover theme-${theme}`} side="bottom" align="end" sideOffset={9}>
@@ -236,10 +214,10 @@ export function MemberProfileNavigation({
   return (
     <div className="member-profile-navigation">
       {!ready ? <button className="member-nav-loading" type="button" aria-label={words.login} title={words.login} onClick={() => openMemberAuth('login')}><LoaderCircle size={18} /></button> : authenticated ? <>
-        {shortcut('orders', words.orders, <ShoppingBag size={19} />, displayedOrderCount)}
-        {shortcut('notifications', words.notifications, <Bell size={19} />, unreadCount)}
+        {shortcut('messages', words.messages, <PlatformAccountIcon kind="messages" />, messageCount)}
+        {shortcut('notifications', words.notifications, <PlatformAccountIcon kind="notifications" />, notificationCount)}
         {shortcut('profile', words.profile, avatar ? <Image src={profile!.avatarUrl!} alt="" width={38} height={38} unoptimized onError={() => setAvatarFailed(true)} /> : <AlienGlyph filled />)}
-      </> : <Popover open={open} onOpenChange={setOpen}>
+      </> : <>{shortcut('messages', words.messages, <PlatformAccountIcon kind="messages" />)}{shortcut('notifications', words.notifications, <PlatformAccountIcon kind="notifications" />)}<Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger render={<button className="member-alien-login" aria-label={words.login} title={words.login} onClick={(event) => { event.preventDefault(); openMemberAuth('login'); }} />}><AlienGlyph filled={false} /></PopoverTrigger>
         <PopoverContent className={`member-auth-popover theme-${theme}`} side="bottom" align="end" sideOffset={9}>
           <PopoverHeader>
@@ -263,7 +241,7 @@ export function MemberProfileNavigation({
             <button className="member-auth-submit" type="submit" disabled={busy}>{busy ? <><LoaderCircle size={17} />{words.loading}</> : mode === 'login' ? words.submitLogin : words.submitRegister}</button>
           </form>
         </PopoverContent>
-      </Popover>}
+      </Popover></>}
     </div>
   );
 }
