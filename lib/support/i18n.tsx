@@ -9,8 +9,9 @@ export function memberLocale(value?:string|null):Locale{const normalized=String(
 function cookieValue(name:string){const value=document.cookie.split(';').map(item=>item.trim()).find(item=>item.startsWith(`${name}=`))?.split('=').slice(1).join('=');return value?decodeURIComponent(value):null;}
 export function hasLocaleOverride(){return Boolean(cookieValue(localeOverrideCookie));}
 function sharedDomain(){const host=location.hostname;return host==='alienfarmers.org'||host.endsWith('.alienfarmers.org')?`; Domain=${host.endsWith('.staging.alienfarmers.org')?'.staging.alienfarmers.org':'.alienfarmers.org'}`:'';}
-export function clearLocaleOverride(){const secure=location.protocol==='https:'?'; Secure':'';document.cookie=`${localeOverrideCookie}=; Path=/; Max-Age=0; SameSite=Lax${sharedDomain()}${secure}`;}
-function persistLocaleOverride(value:Locale){const secure=location.protocol==='https:'?'; Secure':'';document.cookie=`${localeOverrideCookie}=${value}; Path=/; Max-Age=${12*60*60}; SameSite=Lax${sharedDomain()}${secure}`;}
+function clearLegacyHostLocaleOverride(){const secure=location.protocol==='https:'?'; Secure':'';document.cookie=`${localeOverrideCookie}=; Path=/; Max-Age=0; SameSite=Lax${secure}`;}
+export function clearLocaleOverride(){const secure=location.protocol==='https:'?'; Secure':'';clearLegacyHostLocaleOverride();document.cookie=`${localeOverrideCookie}=; Path=/; Max-Age=0; SameSite=Lax${sharedDomain()}${secure}`;}
+function persistLocaleOverride(value:Locale){const secure=location.protocol==='https:'?'; Secure':'';clearLegacyHostLocaleOverride();document.cookie=`${localeOverrideCookie}=${value}; Path=/; Max-Age=${12*60*60}; SameSite=Lax${sharedDomain()}${secure}`;}
 // English is the stable message key. Customer-authored messages are never translated.
 const rows=`
 retail|สมาชิกทั่วไป|零售会员|零售會員|Розничный клиент
@@ -233,7 +234,7 @@ export function translate(key:string,locale:Locale){const clean=key.trim();const
 const Context=createContext({locale:'en' as Locale,t:(s:string)=>s,setLocale:(_v:Locale)=>{},applyMemberPreference:(_v?:string|null)=>{},agent:false});
 export function I18nProvider({children,agent=false}:{children:React.ReactNode;agent?:boolean}){
  const [locale,setState]=useState<Locale>('en');
- useEffect(()=>{const key=agent?'af-ops-language':'af-chat-language';let language:Locale='en';try{const official=location.hostname==='alienfarmers.org'||location.hostname.endsWith('.alienfarmers.org'),override=agent?null:cookieValue(localeOverrideCookie),preference=agent?null:cookieValue(sharedLocaleCookie),saved=localStorage.getItem(key);if(override)language=memberLocale(override);else if(preference)language=memberLocale(preference);else if((agent||!official)&&saved&&saved in languages)language=saved as Locale;else language=browserLocale();}catch{}if(agent&&!['en','th','zh-CN'].includes(language))language=language==='zh-TW'?'zh-CN':'en';queueMicrotask(()=>setState(language));},[agent]);
+ useEffect(()=>{const key=agent?'af-ops-language':'af-chat-language';let language:Locale='en';try{const official=location.hostname==='alienfarmers.org'||location.hostname.endsWith('.alienfarmers.org');if(official&&!agent)clearLegacyHostLocaleOverride();const override=agent?null:cookieValue(localeOverrideCookie),preference=agent?null:cookieValue(sharedLocaleCookie),saved=localStorage.getItem(key);if(override)language=memberLocale(override);else if(preference)language=memberLocale(preference);else if((agent||!official)&&saved&&saved in languages)language=saved as Locale;else language=browserLocale();}catch{}if(agent&&!['en','th','zh-CN'].includes(language))language=language==='zh-TW'?'zh-CN':'en';queueMicrotask(()=>setState(language));},[agent]);
  const setLocale=(value:Locale)=>{setState(value);try{localStorage.setItem(agent?'af-ops-language':'af-chat-language',value);if(!agent)persistLocaleOverride(value);}catch{}};
  const applyMemberPreference=(value?:string|null)=>{if(!agent&&!hasLocaleOverride())setState(memberLocale(value));};
  useEffect(()=>{document.documentElement.lang=locale;},[locale]);
