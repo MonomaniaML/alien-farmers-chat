@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 
-export const PLATFORM_SHELL_VERSION = "0.1.0";
+export const PLATFORM_SHELL_VERSION = "0.1.1";
 
 export type PlatformRouteKey = "home" | "archive" | "verify" | "member" | "drop" | "social" | "support";
 export type PlatformLocale = "en" | "th" | "zh-CN" | "zh-TW" | "ru";
@@ -48,8 +48,11 @@ export function PlatformShell({ locale, activeKey, origins, renderBrandMark, ren
   const copy = labels[locale];
   const routes: ReadonlyArray<[PlatformRouteKey, string]> = [
     ["home", origins.website], ["archive", `${origins.website}/flowers`], ["verify", origins.verify],
-    ["member", origins.member], ["drop", origins.drop], ["social", origins.social], ["support", origins.support],
+    ["drop", origins.drop], ["social", origins.social], ["support", origins.support], ["member", origins.member],
   ];
+  const routeControl = (key: PlatformRouteKey, href: string, feature = false) => key === "social"
+    ? <button type="button" className="af-platform-shell__route-disabled" aria-disabled="true" disabled key={key}>{feature ? renderFeatureIcon(key) : <LineIcon kind={key} />}<span>{copy[key]}</span><small>{copy.soon}</small></button>
+    : <a className={activeKey === key ? "active" : ""} href={href} key={key}>{feature ? renderFeatureIcon(key) : <LineIcon kind={key} />}<span>{copy[key]}</span>{upcoming.includes(key) ? <small>{copy.soon}</small> : null}</a>;
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
@@ -65,14 +68,14 @@ export function PlatformShell({ locale, activeKey, origins, renderBrandMark, ren
         <div className="af-platform-shell__brand">{renderBrandMark("header")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div>
         <div className="af-platform-shell__actions">{desktopActions}</div>
       </div>
-      <nav className="af-platform-shell__shortcuts" aria-label="Quick access">{routes.slice(1).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{copy[key]}</span>{upcoming.includes(key) ? <small>{copy.soon}</small> : null}</a>)}</nav>
+      <nav className="af-platform-shell__shortcuts" aria-label="Quick access">{routes.map(([key, href]) => routeControl(key, href))}</nav>
     </header>
     <aside className={`af-platform-shell__drawer af-platform-shell__drawer--${accent}${open ? " open" : ""}`} aria-hidden={!open}>
       <div className="af-platform-shell__drawer-head"><div className="af-platform-shell__brand">{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div><button type="button" onClick={() => setOpen(false)} aria-label={copy.close}>×</button></div>
-      <nav>{routes.map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}>{renderFeatureIcon(key)}<span>{copy[key]}</span>{upcoming.includes(key) ? <small>{copy.soon}</small> : null}</a>)}</nav>
+      <nav>{routes.map(([key, href]) => routeControl(key, href, true))}</nav>
       <div className="af-platform-shell__drawer-theme"><span>{copy.theme}</span>{drawerThemeControl}</div>
     </aside>
     {open ? <button className="af-platform-shell__scrim" type="button" onPointerDown={() => setOpen(false)} onClick={() => setOpen(false)} aria-label={copy.close} /> : null}
-    <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary navigation">{routes.slice(0, 4).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
+    <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary navigation">{([['home', origins.website], ['archive', `${origins.website}/flowers`], ['verify', origins.verify], ['member', origins.member]] as Array<[PlatformRouteKey,string]>).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
   </>;
 }
