@@ -83,6 +83,7 @@ html:has(.af-floating-page),body:has(.af-floating-page){background:transparent}.
 .af-floating-chat.is-embedded{inset:0;width:100%;height:100%}.af-floating-chat.is-embedded .af-floating-panel{inset:0;width:100%;height:100%;min-height:0;border-radius:20px}
 
 /* Shared ALIEN FARMERS customer navigation. */
+.platform-header{position:sticky;top:0;z-index:80;flex:none}
 .platform-global-header{position:relative;z-index:80;flex:none;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(3,10,7,.96);backdrop-filter:blur(18px)}
 .platform-global-main{height:72px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 32px}
 .platform-global-menu{justify-self:start;width:42px;height:42px;display:grid;align-content:center;gap:5px;padding:9px;border:1px solid transparent;border-radius:50%;color:#eef3ef;background:transparent;cursor:pointer}
@@ -100,3 +101,5 @@ html:has(.af-floating-page),body:has(.af-floating-page){background:transparent}.
 @media(max-width:390px){.platform-global-brand strong{font-size:11px;letter-spacing:.16em}.platform-global-main{padding:0 8px}.platform-global-language>button{padding-right:3px}}
 .member-summary-popover{width:280px!important;padding:17px!important;gap:12px!important;border:1px solid #334238!important;background:#09120d!important;color:#f1f5f0!important;box-shadow:0 20px 60px rgba(0,0,0,.48)!important}.member-summary-popover [data-slot=popover-title]{font-size:11px;font-weight:650;letter-spacing:.12em;text-transform:uppercase}.member-summary-popover [data-slot=popover-description]{margin-top:5px;color:#dce4de;font-size:14px;line-height:1.5}.member-summary-popover>a{min-height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border:1px solid #52652c;border-radius:7px;color:#d8ef4d;font-size:12px;text-decoration:none}.member-summary-popover>a:hover{background:#152016}.member-summary-popover.theme-light{border-color:#c2ccc1!important;background:#f7faf5!important;color:#172219!important;box-shadow:0 20px 60px rgba(34,54,40,.18)!important}.member-summary-popover.theme-light [data-slot=popover-description]{color:#46564d}.member-summary-popover.theme-light>a{border-color:#71872a;color:#5f7810}
 .member-auth-popover,.member-summary-popover{z-index:110!important}
+
+.platform-global-theme>svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}

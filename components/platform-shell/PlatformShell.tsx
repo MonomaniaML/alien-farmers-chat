@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 
-export const PLATFORM_SHELL_VERSION = "0.1.1";
+export const PLATFORM_SHELL_VERSION = "0.1.2";
 
 export type PlatformRouteKey = "home" | "archive" | "verify" | "member" | "drop" | "social" | "support";
 export type PlatformLocale = "en" | "th" | "zh-CN" | "zh-TW" | "ru";
@@ -71,7 +71,7 @@ export function PlatformShell({ locale, activeKey, origins, renderBrandMark, ren
       <nav className="af-platform-shell__shortcuts" aria-label="Quick access">{routes.map(([key, href]) => routeControl(key, href))}</nav>
     </header>
     <aside className={`af-platform-shell__drawer af-platform-shell__drawer--${accent}${open ? " open" : ""}`} aria-hidden={!open}>
-      <div className="af-platform-shell__drawer-head"><div className="af-platform-shell__brand">{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div><button type="button" onClick={() => setOpen(false)} aria-label={copy.close}>×</button></div>
+      <div className="af-platform-shell__drawer-head"><div className="af-platform-shell__brand">{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div><div className="af-platform-shell__drawer-head-actions"><button className="af-platform-shell__drawer-head-theme" type="button" onClick={() => { const control = document.querySelector<HTMLElement>(".af-platform-shell__drawer-theme button"); control?.click(); }} aria-label={copy.theme}><svg className="af-platform-shell__drawer-head-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg><svg className="af-platform-shell__drawer-head-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg></button><button className="af-platform-shell__drawer-close" type="button" onClick={() => setOpen(false)} aria-label={copy.close}>×</button></div></div>
       <nav>{routes.map(([key, href]) => routeControl(key, href, true))}</nav>
       <div className="af-platform-shell__drawer-theme"><span>{copy.theme}</span>{drawerThemeControl}</div>
     </aside>
