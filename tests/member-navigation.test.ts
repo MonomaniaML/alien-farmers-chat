@@ -51,10 +51,16 @@ void test('customer chat uses the shared member language cookie and locale alias
   assert.match(visitor, /applyMemberPreference\(next\.preferredLocale\)/);
 });
 
-void test('registration presents date of birth as guided year, month and day segments', async () => {
+void test('customer support uses the homepage account controls without a local login or registration form', async () => {
   const source = await readFile(new URL('../components/member-profile-navigation.tsx', import.meta.url), 'utf8');
-  assert.match(source, /className="member-birth-segments"/);
-  for (const placeholder of ['YYYY', 'MM', 'DD']) assert.match(source, new RegExp(`placeholder="${placeholder}"`));
-  assert.match(source, /name="dateOfBirth" type="hidden"/);
-  assert.match(source, /isValidBirthDate/);
+  assert.match(source, /PlatformAccountIcon kind=\{kind\}/);
+  assert.match(source, /\['messages', 'notifications', 'profile'\]/);
+  assert.match(source, /\/auth\/login\?returnTo=/);
+  assert.doesNotMatch(source, /member-auth-form/);
+  assert.doesNotMatch(source, /apiBase\}\/register/);
+});
+
+void test('message and notification icons retain the shared outlined glyph style', async () => {
+  const styles = await readFile(new URL('../app/redesign.css', import.meta.url), 'utf8');
+  assert.match(styles, /\.member-message-link>svg,\.member-bell>svg\{[^}]*fill:none;stroke:currentColor/);
 });
