@@ -10,9 +10,10 @@ import type { Locale } from '@/lib/support/i18n';
 import type { MemberProfile } from '@/lib/member-navigation';
 import { platformOrigins } from '@/lib/platform-environment';
 
-export function openMemberAuth(_mode: 'login' | 'register' = 'login') {
-  const returnTo = `${window.location.pathname}${window.location.search}`;
-  window.location.assign(`/auth/login?returnTo=${encodeURIComponent(returnTo)}`);
+export function openMemberAuth(mode: 'login' | 'register' = 'login') {
+  const target = new URL(platformOrigins.member);
+  if (mode === 'register') target.searchParams.set('mode', 'register');
+  window.location.assign(target.toString());
 }
 
 const copy = {

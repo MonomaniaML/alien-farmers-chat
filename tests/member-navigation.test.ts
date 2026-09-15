@@ -55,7 +55,8 @@ void test('customer support uses the homepage account controls without a local l
   const source = await readFile(new URL('../components/member-profile-navigation.tsx', import.meta.url), 'utf8');
   assert.match(source, /PlatformAccountIcon kind=\{kind\}/);
   assert.match(source, /\['messages', 'notifications', 'profile'\]/);
-  assert.match(source, /\/auth\/login\?returnTo=/);
+  assert.match(source, /new URL\(platformOrigins\.member\)/);
+  assert.doesNotMatch(source, /\/auth\/login\?returnTo=/);
   assert.doesNotMatch(source, /member-auth-form/);
   assert.doesNotMatch(source, /apiBase\}\/register/);
 });

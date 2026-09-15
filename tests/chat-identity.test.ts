@@ -45,7 +45,9 @@ void test('Chat customer pages use the shared platform shell and current-tab mem
   assert.match(shell, /af-platform-shell__mobile/);
   assert.match(navigation, /<PlatformIcon type=\{key\}/);
   assert.match(navigation, /origins=\{platformOrigins\}/);
-  assert.match(member, /window\.location\.assign\(`\/auth\/login/);
-  assert.match(member, /!ready \? <button className="member-nav-loading"/);
+  assert.match(member, /new URL\(platformOrigins\.member\)/);
+  assert.match(member, /window\.location\.assign\(target\.toString\(\)\)/);
+  assert.doesNotMatch(member, /window\.location\.assign\(`\/auth\/login/);
+  assert.match(member, /!ready\s*\? <button className="member-nav-loading"/);
   assert.match(member, /member-summary-popover/);
 });
