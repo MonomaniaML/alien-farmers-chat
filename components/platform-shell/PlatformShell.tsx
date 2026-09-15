@@ -2,12 +2,18 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 
-export const PLATFORM_SHELL_VERSION = "0.1.3";
+export const PLATFORM_SHELL_VERSION = "0.1.4";
 
 export type PlatformRouteKey = "home" | "archive" | "verify" | "member" | "drop" | "social" | "support";
 export type PlatformLocale = "en" | "th" | "zh-CN" | "zh-TW" | "ru";
 export type PlatformAccountIconKind = "messages" | "notifications";
 export type PlatformOrigins = { website: string; verify: string; member: string; drop: string; social: string; support: string };
+
+export function withPlatformLocale(href: string, locale: PlatformLocale) {
+  const url = new URL(href);
+  url.searchParams.set("af_lang", locale);
+  return url.toString();
+}
 
 const labels: Record<PlatformLocale, Record<PlatformRouteKey | "theme" | "soon" | "close" | "archiveTab" | "verifyTab" | "me", string>> = {
   en: { home: "Home", archive: "Product archive", verify: "Product verification", member: "Member center", drop: "Drop rewards", social: "Community / Forum", support: "Customer support", theme: "Appearance", soon: "SOON", close: "Close menu", archiveTab: "Archive", verifyTab: "Verify", me: "Me" },
@@ -52,7 +58,7 @@ export function PlatformShell({ locale, activeKey, origins, renderBrandMark, ren
   const [open, setOpen] = useState(false);
   const copy = labels[locale];
   const routes: ReadonlyArray<[PlatformRouteKey, string]> = [
-    ["home", origins.website], ["archive", `${origins.website}/flowers`], ["verify", origins.verify],
+    ["home", origins.website], ["archive", `${origins.website}/flowers`], ["verify", withPlatformLocale(origins.verify, locale)],
     ["drop", origins.drop], ["social", origins.social], ["support", origins.support], ["member", origins.member],
   ];
   const routeControl = (key: PlatformRouteKey, href: string, feature = false) => key === "social"
@@ -81,6 +87,6 @@ export function PlatformShell({ locale, activeKey, origins, renderBrandMark, ren
       <div className="af-platform-shell__drawer-theme"><span>{copy.theme}</span>{drawerThemeControl}</div>
     </aside>
     {open ? <button className="af-platform-shell__scrim" type="button" onPointerDown={() => setOpen(false)} onClick={() => setOpen(false)} aria-label={copy.close} /> : null}
-    <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary navigation">{([['home', origins.website], ['archive', `${origins.website}/flowers`], ['verify', origins.verify], ['member', origins.member]] as Array<[PlatformRouteKey,string]>).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
+    <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary navigation">{([['home', origins.website], ['archive', `${origins.website}/flowers`], ['verify', withPlatformLocale(origins.verify, locale)], ['member', origins.member]] as Array<[PlatformRouteKey,string]>).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
   </>;
 }
