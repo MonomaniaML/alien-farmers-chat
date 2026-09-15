@@ -39,6 +39,9 @@ void test('customer chat uses the shared member language cookie and locale alias
   ]);
   assert.match(i18n, /sharedLocaleCookie='af_locale'/);
   assert.match(i18n, /localeOverrideCookie='af_locale_override'/);
+  assert.match(i18n, /Max-Age=\$\{12\*60\*60\}/);
+  assert.match(i18n, /\.staging\.alienfarmers\.org/);
+  assert.match(i18n, /\.alienfarmers\.org/);
   assert.match(i18n, /normalized==='auto'/);
   assert.match(i18n, /hasLocaleOverride\(\)/);
   assert.match(i18n, /zh-hans/);

@@ -6,12 +6,15 @@ const read = (path: string) => readFile(new URL(`../${path}`, import.meta.url), 
 void test('Chat uses its own OIDC application session with state, nonce and S256 PKCE', async () => {
   const [session, login, callback] = await Promise.all([read('lib/identity/session.ts'), read('app/auth/login/route.ts'), read('app/auth/callback/route.ts')]);
   assert.match(session, /APP_SESSION_COOKIE = 'af_chat_session'/);
-  assert.doesNotMatch(session, /Domain=/);
+  assert.match(session, /sessionCookie[\s\S]*HttpOnly; SameSite=Lax/);
   assert.match(session, /CHAT_SESSION_SECRET/);
   assert.match(login, /client_id: 'chat'/);
   assert.match(login, /code_challenge_method: 'S256'/);
   assert.match(callback, /equalState\(state, transaction\.state\)/);
   assert.match(callback, /code_verifier: transaction\.verifier/);
+  assert.match(callback, /fetch\(`\$\{issuer\}\/token`/);
+  assert.match(callback, /fetch\(`\$\{issuer\}\/me`/);
+  assert.doesNotMatch(callback, /well-known\/openid-configuration/);
 });
 
 void test('Chat member proxy sends a short audience-bound assertion and keeps legacy Cookie fallback', async () => {
@@ -43,5 +46,6 @@ void test('Chat customer pages use the shared platform shell and current-tab mem
   assert.match(navigation, /<PlatformIcon type=\{key\}/);
   assert.match(navigation, /origins=\{platformOrigins\}/);
   assert.match(member, /window\.location\.assign\(`\/auth\/login/);
+  assert.match(member, /!ready \? <button className="member-nav-loading"/);
   assert.match(member, /member-summary-popover/);
 });

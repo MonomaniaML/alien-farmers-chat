@@ -19,6 +19,11 @@ import { platformOrigins } from '@/lib/platform-environment';
 export const MEMBER_AUTH_EVENT = 'alienfarmers:member-auth';
 
 export function openMemberAuth(mode: 'login' | 'register' = 'login') {
+  if (mode === 'login') {
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    window.location.assign(`/auth/login?returnTo=${encodeURIComponent(returnTo)}`);
+    return;
+  }
   window.dispatchEvent(new CustomEvent(MEMBER_AUTH_EVENT, { detail: { mode } }));
 }
 
@@ -230,12 +235,12 @@ export function MemberProfileNavigation({
   </Popover>;
   return (
     <div className="member-profile-navigation">
-      {!ready ? <span className="member-nav-loading"><LoaderCircle size={18} /></span> : authenticated ? <>
+      {!ready ? <button className="member-nav-loading" type="button" aria-label={words.login} title={words.login} onClick={() => openMemberAuth('login')}><LoaderCircle size={18} /></button> : authenticated ? <>
         {shortcut('orders', words.orders, <ShoppingBag size={19} />, displayedOrderCount)}
         {shortcut('notifications', words.notifications, <Bell size={19} />, unreadCount)}
         {shortcut('profile', words.profile, avatar ? <Image src={profile!.avatarUrl!} alt="" width={38} height={38} unoptimized onError={() => setAvatarFailed(true)} /> : <AlienGlyph filled />)}
       </> : <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger render={<button className="member-alien-login" aria-label={words.login} title={words.login} />}><AlienGlyph filled={false} /></PopoverTrigger>
+        <PopoverTrigger render={<button className="member-alien-login" aria-label={words.login} title={words.login} onClick={(event) => { event.preventDefault(); openMemberAuth('login'); }} />}><AlienGlyph filled={false} /></PopoverTrigger>
         <PopoverContent className={`member-auth-popover theme-${theme}`} side="bottom" align="end" sideOffset={9}>
           <PopoverHeader>
             <PopoverTitle>{mode === 'login' ? words.login : words.register}</PopoverTitle>
