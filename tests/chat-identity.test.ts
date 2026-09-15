@@ -48,6 +48,7 @@ void test('Chat customer pages use the shared platform shell and current-tab mem
   assert.match(member, /new URL\(platformOrigins\.member\)/);
   assert.match(member, /window\.location\.assign\(target\.toString\(\)\)/);
   assert.doesNotMatch(member, /window\.location\.assign\(`\/auth\/login/);
-  assert.match(member, /!ready\s*\? <button className="member-nav-loading"/);
+  assert.doesNotMatch(member, /member-nav-loading|LoaderCircle/);
+  assert.match(member, /kind === 'profile' \? 'member-alien-login'/);
   assert.match(member, /member-summary-popover/);
 });

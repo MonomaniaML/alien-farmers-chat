@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { LoaderCircle } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from '@/components/ui/popover';
 import { PlatformAccountIcon } from '@/components/platform-shell/PlatformShell';
@@ -43,7 +42,6 @@ export function MemberProfileNavigation({ locale, apiBase = '/api/member', membe
 }) {
   const words = copy[locale];
   const [profile, setProfile] = useState<MemberProfile | null>(null);
-  const [ready, setReady] = useState(false);
   const [quickOpen, setQuickOpen] = useState<Shortcut | null>(null);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const [remoteNotificationCount, setRemoteNotificationCount] = useState(0);
@@ -61,8 +59,7 @@ export function MemberProfileNavigation({ locale, apiBase = '/api/member', membe
         setProfile(next);
         onSessionChangeRef.current?.(next);
       })
-      .catch(() => {})
-      .finally(() => active && setReady(true));
+      .catch(() => {});
     return () => { active = false; };
   }, [apiBase]);
 
@@ -93,7 +90,7 @@ export function MemberProfileNavigation({ locale, apiBase = '/api/member', membe
     return value !== undefined && value > 0 ? <span className="member-unread-badge">{value > 99 ? '99+' : value}</span> : null;
   };
 
-  const signedOutButton = (kind: Shortcut) => <button key={kind} type="button" className={buttonClass(kind)} aria-label={label(kind)} title={label(kind)} onClick={() => openMemberAuth()}>{icon(kind)}{badge(kind)}</button>;
+  const signedOutButton = (kind: Shortcut) => <button key={kind} type="button" className={kind === 'profile' ? 'member-alien-login' : buttonClass(kind)} aria-label={label(kind)} title={label(kind)} onClick={() => openMemberAuth()}>{icon(kind)}{badge(kind)}</button>;
 
   const signedInButton = (kind: Shortcut, itemIcon: ReactNode) => <Popover key={kind} open={quickOpen === kind} onOpenChange={next => setQuickOpen(next ? kind : null)}>
     <PopoverTrigger render={<button type="button" className={buttonClass(kind)} aria-label={label(kind)} title={label(kind)} />}>
@@ -108,8 +105,6 @@ export function MemberProfileNavigation({ locale, apiBase = '/api/member', membe
 
   const shortcuts: Shortcut[] = ['messages', 'notifications', 'profile'];
   return <div className="member-profile-navigation">
-    {!ready
-      ? <button className="member-nav-loading" type="button" aria-label={words.login} title={words.login} onClick={() => openMemberAuth()}><LoaderCircle size={18} /></button>
-      : authenticated ? shortcuts.map(kind => signedInButton(kind, icon(kind))) : shortcuts.map(signedOutButton)}
+    {authenticated ? shortcuts.map(kind => signedInButton(kind, icon(kind))) : shortcuts.map(signedOutButton)}
   </div>;
 }
