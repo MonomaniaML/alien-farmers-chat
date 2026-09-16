@@ -18,7 +18,7 @@ export function withPlatformLocale(href: string, locale: PlatformLocale) {
 }
 
 const labels: Record<PlatformLocale, Record<PlatformRouteKey | "theme" | "soon" | "close" | "archiveTab" | "verifyTab" | "me", string>> = {
-  en: { home: "Home", archive: "Product archive", verify: "Product verification", member: "Member center", drop: "Drop rewards", social: "Community / Forum", support: "Customer support", theme: "Appearance", soon: "SOON", close: "Close menu", archiveTab: "Archive", verifyTab: "Verify", me: "Me" },
+  en: { home: "Home", archive: "Product", verify: "Verify", member: "Member", drop: "Reward", social: "Community", support: "Support", theme: "Appearance", soon: "SOON", close: "Close Menu", archiveTab: "Product", verifyTab: "Verify", me: "Member" },
   th: { home: "หน้าหลัก", archive: "คลังข้อมูลสินค้า", verify: "ตรวจสอบสินค้า", member: "ศูนย์สมาชิก", drop: "รางวัลดรอป", social: "ชุมชน / ฟอรัม", support: "ฝ่ายช่วยเหลือ", theme: "ธีม", soon: "เร็ว ๆ นี้", close: "ปิดเมนู", archiveTab: "คลัง", verifyTab: "ตรวจสอบ", me: "ฉัน" },
   "zh-CN": { home: "首页", archive: "产品档案", verify: "产品验证", member: "会员中心", drop: "掉落奖励", social: "社区 / 论坛", support: "客服支持", theme: "明暗模式", soon: "即将开放", close: "关闭菜单", archiveTab: "档案", verifyTab: "验证", me: "我的" },
   "zh-TW": { home: "首頁", archive: "產品檔案", verify: "產品驗證", member: "會員中心", drop: "掉落獎勵", social: "社群 / 論壇", support: "客服支援", theme: "明暗模式", soon: "即將開放", close: "關閉選單", archiveTab: "檔案", verifyTab: "驗證", me: "我的" },
@@ -81,11 +81,11 @@ export function PlatformShell({ locale, activeKey, origins, renderBrandMark, ren
         <div className="af-platform-shell__brand">{renderBrandMark("header")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div>
         <div className="af-platform-shell__actions">{desktopActions}</div>
       </div>
-      <nav className="af-platform-shell__shortcuts" aria-label="Quick access">{routes.map(([key, href]) => routeControl(key, href))}</nav>
+      <nav className="af-platform-shell__shortcuts" aria-label="Quick Access">{routes.map(([key, href]) => routeControl(key, href))}</nav>
     </header>
     <PlatformDrawer open={open} onClose={() => setOpen(false)} locale={locale} accent={accent} brand={<>{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></>} themeControl={drawerThemeControl}>{routes.map(([key, href]) => routeControl(key, href, true))}</PlatformDrawer>
     {open ? <button className="af-platform-shell__scrim" type="button" onPointerDown={() => setOpen(false)} onClick={() => setOpen(false)} aria-label={copy.close} /> : null}
-    <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary navigation">{([['home', origins.website], ['archive', `${origins.website}/flowers`], ['verify', withPlatformLocale(origins.verify, locale)], ['member', origins.member]] as Array<[PlatformRouteKey,string]>).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
+    <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary Navigation">{([['home', origins.website], ['archive', `${origins.website}/flowers`], ['verify', withPlatformLocale(origins.verify, locale)], ['member', origins.member]] as Array<[PlatformRouteKey,string]>).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
   </>;
 }
 
