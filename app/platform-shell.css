@@ -51,3 +51,29 @@ html[data-theme=light] .af-platform-shell--verify [data-af-account][data-authent
 .af-platform-shell__scrim[hidden]{display:none!important}
 
 .af-platform-shell__drawer .af-platform-shell__theme-control button svg{width:20px!important;height:20px!important;stroke-width:1.5!important}
+
+/* Public navigation controls. Game lobby deliberately uses its own header. */
+:is(.af-platform-shell,.platform-global-header){--af-control-size:42px;--af-language-width:52px;--af-header-font:Arial,"Noto Sans Thai","Noto Sans SC",sans-serif}
+:is(.af-platform-shell__main,.platform-header-main) :is(.af-platform-shell__brand strong,.brand){font-family:var(--af-header-font)!important;font-size:15px!important;font-weight:560!important;line-height:20px!important;letter-spacing:.27em!important}
+:is(.af-platform-shell__main .af-platform-shell__brand,.platform-header-main .brand-lockup)>button{position:relative!important;display:grid!important;place-items:center!important;flex:0 0 42px!important;width:42px!important;height:38px!important;padding:0!important}
+:is(.af-platform-shell__main,.platform-header-main) :is(.motion-planet,.planet-logo){position:relative!important;left:auto!important;top:auto!important;width:28px!important;height:22px!important;transform:scale(1.25)!important;transform-origin:center!important}
+:is(.af-platform-shell__main,.platform-header-main) :is(.platform-theme-toggle,.platform-global-theme,.brand-theme-toggle,.af-theme-button,.platform-member-actions>button,.member-profile-navigation>button,.member-message-link,.member-bell,.member-alien-login,.brand-member-actions>button,.platform-member-navigation>button){width:var(--af-control-size)!important;height:var(--af-control-size)!important;min-width:var(--af-control-size)!important;padding:0!important}
+:is(.af-platform-shell__main,.platform-header-main) :is(.platform-theme-toggle,.platform-global-theme,.brand-theme-toggle,.af-theme-button,.platform-member-actions>button,.member-message-link,.member-bell,.brand-member-actions>button,.platform-member-navigation>button) svg{width:20px!important;height:20px!important}
+:is(.af-platform-shell__main,.platform-header-main) :is(.platform-member-actions>button:last-of-type,.member-alien-login,.brand-member-actions>button:last-of-type,.platform-profile) svg{width:24px!important;height:24px!important}
+.af-language{position:relative;flex:none;color:inherit;font-family:Arial,"Noto Sans Thai","Noto Sans SC",sans-serif}
+.af-language>.af-language__trigger{box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:7px;width:52px!important;min-width:52px!important;height:34px!important;padding:0!important;border:0;background:transparent;color:inherit;font:11px Arial,sans-serif;letter-spacing:.12em;cursor:pointer}
+.af-language__trigger i{width:6px;height:6px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+.af-language__trigger[aria-expanded=true] i{transform:translateY(2px) rotate(225deg)}
+.af-language>.af-language__menu{box-sizing:border-box;position:absolute;z-index:96;top:calc(100% + 10px);right:0;width:176px;padding:5px;border:1px solid #34443b;border-radius:0;background:#060e0a;color:#97a69e;box-shadow:0 18px 44px #0007}
+.af-language__menu[hidden]{display:none}
+.af-language>.af-language__menu button{box-sizing:border-box;position:relative;display:grid;grid-template-columns:34px 1fr;align-items:center;width:100%;height:39px;min-height:39px;padding:0 10px;border:0;border-radius:0;text-align:left;background:transparent;color:inherit;cursor:pointer;font-family:inherit;text-transform:none!important}
+.af-language__menu b{font-size:10px;font-weight:500;letter-spacing:.12em}.af-language__menu span{font-size:11px;letter-spacing:.04em;text-transform:none!important}
+.af-language__menu button:hover,.af-language__menu button:focus-visible{background:#101914;color:#eef4f0}
+.af-language__menu button.active{color:var(--af-shell-accent,#d8ef4d)}
+.af-language__menu button.active:after{content:"";position:absolute;right:9px;width:4px;height:4px;border-radius:50%;background:currentColor}
+.af-language__trigger:focus-visible,.af-language__menu button:focus-visible{outline:2px solid var(--af-shell-accent,#d8ef4d);outline-offset:2px}
+html[data-theme=light] .af-language>.af-language__menu{background:#f5f8f2;color:#52644f;border-color:#ccd6cd}
+html[data-theme=light] .af-language__menu button.active{color:#526b27}
+html[data-theme=light] .af-language__menu button:hover,html[data-theme=light] .af-language__menu button:focus-visible{background:#e6ede3;color:#26362c}
+@media(max-width:760px){.platform-global-header{height:64px!important;min-height:64px!important}.platform-global-header .platform-header-main{height:64px!important;padding:0 13px!important}.platform-global-header .platform-shortcuts{display:none!important}.platform-global-header .platform-member-navigation,.platform-global-header .desktop-theme{display:none!important}:is(.af-platform-shell__main,.platform-header-main) :is(.af-platform-shell__brand strong,.brand){font-size:13px!important;letter-spacing:.2em!important}.platform-header-main .brand-lockup{gap:7px!important}}
+@media(max-width:390px){:is(.af-platform-shell__main,.platform-header-main) :is(.af-platform-shell__brand strong,.brand){font-size:11px!important;letter-spacing:.16em!important}}
