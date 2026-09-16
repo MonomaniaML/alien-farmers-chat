@@ -1,6 +1,8 @@
 import 'server-only';
 
 import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { safeReturnTo } from './return-path';
+export { safeReturnTo } from './return-path';
 
 export const APP_SESSION_COOKIE = 'af_chat_session';
 export const OIDC_TRANSACTION_COOKIE = 'af_chat_oidc_transaction';
@@ -22,7 +24,6 @@ function decode<T>(value: string): T | null { const [payload, signature] = value
 export function identityIssuer() { return (process.env.IDENTITY_ISSUER || (process.env.NODE_ENV === 'production' ? 'https://auth.alienfarmers.org' : 'http://localhost:3050')).replace(/\/+$/u, ''); }
 export function callbackUri(request: Request) { const url = new URL(request.url); const protocol = request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim() || url.protocol.replace(':', ''); const host = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim() || url.host; return `${protocol}://${host}/auth/callback`; }
 export function postLogoutUri(request: Request) { return new URL('/', callbackUri(request)).toString(); }
-export function safeReturnTo(value: string) { return value.startsWith('/') && !value.startsWith('//') ? value.slice(0, 500) : '/'; }
 export function createOidcTransaction(request: Request, returnTo: string) { const verifier = randomBytes(48).toString('base64url'); const transaction: OidcTransaction = { v: 1, state: randomBytes(24).toString('base64url'), nonce: randomBytes(24).toString('base64url'), verifier, client: 'chat', redirectUri: callbackUri(request), returnTo: safeReturnTo(returnTo), exp: Math.floor(Date.now() / 1000) + 600 }; return { transaction, encoded: encode(transaction), challenge: createHash('sha256').update(verifier).digest('base64url') }; }
 export function readOidcTransaction(request: Request) { const transaction = decode<OidcTransaction>(cookieValue(request, OIDC_TRANSACTION_COOKIE)); return transaction?.v === 1 && transaction.client === 'chat' && transaction.exp > Date.now() / 1000 && transaction.redirectUri === callbackUri(request) ? transaction : null; }
 export function createAppSession(memberId: string, email: string) { const now = Math.floor(Date.now() / 1000); return encode({ v: 1, sub: memberId, email: email.trim().toLowerCase(), client: 'chat', iat: now, exp: now + 12 * 60 * 60 } satisfies AppSession); }

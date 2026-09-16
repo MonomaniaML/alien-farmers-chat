@@ -8,9 +8,13 @@ import { PlatformAccountIcon } from '@/components/platform-shell/PlatformShell';
 import type { Locale } from '@/lib/support/i18n';
 import type { MemberProfile } from '@/lib/member-navigation';
 import { platformOrigins } from '@/lib/platform-environment';
+import { ticketSessionSync } from '@/lib/identity/return-path';
 
 export function openMemberAuth(mode: 'login' | 'register' = 'login') {
   const target = new URL(platformOrigins.member);
+  const previous = new URL(window.location.href);
+  previous.searchParams.delete('af_session_sync');
+  target.searchParams.set('returnTo', previous.toString());
   if (mode === 'register') target.searchParams.set('mode', 'register');
   window.location.assign(target.toString());
 }
@@ -51,16 +55,23 @@ export function MemberProfileNavigation({ locale, apiBase = '/api/member', membe
 
   useEffect(() => {
     let active = true;
-    fetch(`${apiBase}/session`, { credentials: 'include', cache: 'no-store' })
-      .then(async response => response.ok ? (await response.json()) as AuthResponse : null)
+    const refresh = () => fetch(`${apiBase}/session`, { credentials: 'include', cache: 'no-store' })
+      .then(async response => {
+        if (response.status !== 401 && !response.ok) throw new Error('Session unavailable');
+        return response.ok ? (await response.json()) as AuthResponse : null;
+      })
       .then(payload => {
         if (!active) return;
         const next = payload?.data?.authenticated ? payload.data.profile || null : null;
+        const sync = !next ? ticketSessionSync(window.location.href) : null;
+        if (sync) { window.location.replace(sync); return; }
         setProfile(next);
         onSessionChangeRef.current?.(next);
       })
       .catch(() => { if (active) onSessionChangeRef.current?.(null); });
-    return () => { active = false; };
+    void refresh();
+    window.addEventListener('focus', refresh);
+    return () => { active = false; window.removeEventListener('focus', refresh); };
   }, [apiBase]);
 
   useEffect(() => {
