@@ -15,10 +15,11 @@ import { useCloudSupport } from '@/hooks/use-cloud-support';
 
 const accessKey='af-chat-access:v1';
 
-export function VisitorTerminal({initialTheme='dark'}:{initialTheme?:'dark'|'light'}={}){return <I18nProvider><ConversationCenter initialTheme={initialTheme}/></I18nProvider>;}
-function ConversationCenter({initialTheme}:{initialTheme:'dark'|'light'}){
+export function VisitorTerminal({initialTheme='dark',initialAssistant}:{initialTheme?:'dark'|'light';initialAssistant?:string}={}){return <I18nProvider><ConversationCenter initialTheme={initialTheme} initialAssistant={initialAssistant}/></I18nProvider>;}
+function ConversationCenter({initialTheme,initialAssistant}:{initialTheme:'dark'|'light';initialAssistant?:string}){
  const {locale,applyMemberPreference}=useI18n(),copy=(text:string)=>assistantText(text,locale),center=useAssistantCenter(),cloud=useCloudSupport(locale),[theme,setTheme]=useState<'dark'|'light'>(initialTheme),[access,setAccess]=useState<VisitorAccess|null>(null),[gateOpen,setGateOpen]=useState(false),anonymous=access!=='member',candidateId=center.activeId||center.state.lastOpened,candidate=assistantById(candidateId)||ASSISTANTS[0],assistant=anonymous&&!isAnonymousAssistantAvailable(candidate)?ASSISTANTS[0]:candidate,selectedId=assistant.id,localConversation=center.state.conversations[assistant.id],conversation=assistant.id==='customer-support'&&cloud.conversation?{...cloud.conversation,draft:localConversation.draft}:localConversation,unreadMessageCount=Object.values(center.state.conversations).reduce((total,item)=>total+item.unread,0);
  useLayoutEffect(()=>{const sync=()=>setTheme(document.documentElement.dataset.theme==='light'?'light':'dark');sync();window.addEventListener('alien-farmers-theme-change',sync);return()=>window.removeEventListener('alien-farmers-theme-change',sync);},[]);
+ useEffect(()=>{if(center.ready&&initialAssistant)center.select(initialAssistant);},[center.ready,initialAssistant]);
  function toggleTheme(){setTheme(current=>{const next=current==='dark'?'light':'dark';document.documentElement.dataset.theme=next;return next;});}
  function handleSession(next:MemberProfile|null){if(next){applyMemberPreference(next.preferredLocale);setAccess('member');setGateOpen(false);try{localStorage.setItem(accessKey,'member');}catch{}return;}let saved:string|null=null;try{saved=localStorage.getItem(accessKey);}catch{}if(saved==='anonymous')setAccess('anonymous');else{setAccess(null);setGateOpen(true);}}
  function continueAnonymously(){setAccess('anonymous');setGateOpen(false);try{localStorage.setItem(accessKey,'anonymous');}catch{}}

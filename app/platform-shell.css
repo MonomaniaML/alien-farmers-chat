@@ -37,3 +37,17 @@ html[data-theme=light] [data-af-account]{color:#78877e!important;background:#f5f
 html[data-theme=light] [data-af-account]>svg>path:last-child{fill:#f5f7f3!important}
 html[data-theme=light] [data-af-account][data-authenticated=true]{color:#658a31!important;background:#edf4e8!important}
 html[data-theme=light] .af-platform-shell--verify [data-af-account][data-authenticated=true]{color:#27856d!important}
+
+/* Drawer geometry is owned here, including controls supplied by applications. */
+.af-platform-shell__drawer{box-sizing:border-box;visibility:hidden}.af-platform-shell__drawer.open{visibility:visible}
+.af-platform-shell__drawer-settings{margin-top:24px;display:grid;gap:0}
+.af-platform-shell__drawer .af-platform-shell__drawer-theme{min-height:66px;margin:0;padding:0 0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.af-platform-shell__theme-control{display:flex;align-items:center;flex:0 0 42px;width:42px;height:42px}
+.af-platform-shell__drawer .af-platform-shell__theme-control button,.af-theme-button{position:static!important;inset:auto!important;transform:none!important;margin:0!important;box-sizing:border-box;width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important;padding:10px!important;display:grid;place-items:center;border:1px solid #78877d66;border-radius:50%;color:inherit;background:transparent;cursor:pointer;flex-shrink:0}
+.af-platform-shell__theme-control button svg,.af-theme-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.af-platform-shell__drawer-head .af-drawer-planet{color:var(--af-shell-accent);position:relative;display:block;flex:0 0 34px;width:34px;height:28px}
+.af-platform-shell__drawer-head .af-drawer-planet .motion-planet{position:relative;inset:auto;display:block;width:28px;height:22px}
+.af-platform-shell__drawer-head-actions{flex-shrink:0}.af-platform-shell__drawer nav button{width:100%}
+.af-platform-shell__scrim[hidden]{display:none!important}
+
+.af-platform-shell__drawer .af-platform-shell__theme-control button svg{width:20px!important;height:20px!important;stroke-width:1.5!important}

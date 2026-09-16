@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { EffectsControl } from "./EffectsControl";
 
-export const PLATFORM_SHELL_VERSION = "0.2.0";
+export const PLATFORM_SHELL_VERSION = "0.2.1";
 
 export type PlatformRouteKey = "home" | "archive" | "verify" | "member" | "drop" | "social" | "support";
 export type PlatformLocale = "en" | "th" | "zh-CN" | "zh-TW" | "ru";
@@ -83,13 +83,20 @@ export function PlatformShell({ locale, activeKey, origins, renderBrandMark, ren
       </div>
       <nav className="af-platform-shell__shortcuts" aria-label="Quick access">{routes.map(([key, href]) => routeControl(key, href))}</nav>
     </header>
-    <aside className={`af-platform-shell__drawer af-platform-shell__drawer--${accent}${open ? " open" : ""}`} aria-hidden={!open}>
-      <div className="af-platform-shell__drawer-head"><div className="af-platform-shell__brand">{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div><div className="af-platform-shell__drawer-head-actions"><button className="af-platform-shell__drawer-head-theme" type="button" onClick={() => { const control = document.querySelector<HTMLElement>(".af-platform-shell__drawer-theme button"); control?.click(); }} aria-label={copy.theme}><svg className="af-platform-shell__drawer-head-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg><svg className="af-platform-shell__drawer-head-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg></button><button className="af-platform-shell__drawer-close" type="button" onClick={() => setOpen(false)} aria-label={copy.close}>×</button></div></div>
-      <nav>{routes.map(([key, href]) => routeControl(key, href, true))}</nav>
-      <div className="af-platform-shell__drawer-theme"><span>{copy.theme}</span>{drawerThemeControl}</div>
-      <EffectsControl locale={locale} />
-    </aside>
+    <PlatformDrawer open={open} onClose={() => setOpen(false)} locale={locale} accent={accent} brand={<>{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></>} themeControl={drawerThemeControl}>{routes.map(([key, href]) => routeControl(key, href, true))}</PlatformDrawer>
     {open ? <button className="af-platform-shell__scrim" type="button" onPointerDown={() => setOpen(false)} onClick={() => setOpen(false)} aria-label={copy.close} /> : null}
     <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary navigation">{([['home', origins.website], ['archive', `${origins.website}/flowers`], ['verify', withPlatformLocale(origins.verify, locale)], ['member', origins.member]] as Array<[PlatformRouteKey,string]>).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
   </>;
+}
+
+
+export function PlatformDrawer({open, onClose, locale, accent, brand, themeControl, children}: {open: boolean; onClose: () => void; locale: PlatformLocale; accent: "lime" | "verify"; brand: ReactNode; themeControl: ReactNode; children: ReactNode}) {
+  const copy = labels[locale];
+  const themeRef = useRef<HTMLDivElement>(null);
+  return <aside className={`af-platform-shell__drawer af-platform-shell__drawer--${accent}${open ? " open" : ""}`} aria-hidden={!open} inert={!open}>
+      <div className="af-platform-shell__drawer-head"><div className="af-platform-shell__brand">{brand}</div><div className="af-platform-shell__drawer-head-actions"><button className="af-platform-shell__drawer-head-theme" type="button" onClick={() => { themeRef.current?.querySelector<HTMLButtonElement>("button")?.click(); }} aria-label={copy.theme}><svg className="af-platform-shell__drawer-head-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg><svg className="af-platform-shell__drawer-head-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg></button><button className="af-platform-shell__drawer-close" type="button" onClick={onClose} aria-label={copy.close}>×</button></div></div>
+      <nav>{children}</nav>
+      <div className="af-platform-shell__drawer-settings"><div className="af-platform-shell__drawer-theme"><span>{copy.theme}</span><div className="af-platform-shell__theme-control" ref={themeRef}>{themeControl}</div></div>
+      <EffectsControl locale={locale} /></div>
+    </aside>;
 }

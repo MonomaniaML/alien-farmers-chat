@@ -59,7 +59,7 @@ export function MemberProfileNavigation({ locale, apiBase = '/api/member', membe
         setProfile(next);
         onSessionChangeRef.current?.(next);
       })
-      .catch(() => {});
+      .catch(() => { if (active) onSessionChangeRef.current?.(null); });
     return () => { active = false; };
   }, [apiBase]);
 
