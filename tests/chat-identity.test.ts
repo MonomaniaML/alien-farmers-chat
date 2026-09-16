@@ -24,7 +24,7 @@ void test('Chat member proxy sends a short audience-bound assertion and keeps le
 });
 
 void test('Chat uses the common age confirmation independently from member login', async () => {
-  const [gate, layout] = await Promise.all([read('components/age-gate.tsx'), read('app/layout.tsx')]);
+  const [gate, layout] = await Promise.all([read('components/platform-shell/platform-age.js'), read('app/layout.tsx')]);
   assert.match(gate, /af_age_verified|ageVerificationCookie/);
   assert.match(gate, /Max-Age=31536000/);
   assert.doesNotMatch(gate, /MemberProfile|memberRequest|readAppSession/);

@@ -27,3 +27,13 @@ html[data-theme=light] .af-platform-shell,.theme-light .af-platform-shell{border
 .af-platform-shell__effects{display:grid;grid-template-columns:1fr;gap:10px;padding:18px 0 12px;color:inherit;font:inherit;border-top:1px solid #78877d30}.af-platform-shell__effects>span{font-size:13px;letter-spacing:.04em}.af-platform-shell__effects select{width:100%;min-height:42px;padding:9px 12px;border:1px solid #78877d66;border-radius:8px;color:inherit;background:#152019;font:inherit;font-size:13px;color-scheme:dark;cursor:pointer}.af-platform-shell__effects select:focus-visible{outline:2px solid currentColor;outline-offset:3px}.af-platform-shell__effects>small{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}html[data-theme=light] .af-platform-shell__effects select,.theme-light .af-platform-shell__effects select{color:#24382d;background:#fff;color-scheme:light}
 html[data-effects-quality=off] .motion-planet *,html[data-effects-quality=off] .planet-logo *,html[data-effects-quality=off] .portal-icon *,html[data-effects-quality=off] .ambient-orbit{animation:none!important;transition:none!important}
 html[data-effects-quality=low] .portal-icon *,html[data-effects-quality=low] .ambient-orbit{animation:none!important}
+/* Account state is shared by every consumer, independently of local slot CSS. */
+[data-af-account]{color:#edf1ec!important;background:#142019!important;border:1px solid #39463d!important;box-shadow:none!important}
+[data-af-account]>svg{width:24px!important;height:24px!important;fill:currentColor!important;stroke:none!important}
+[data-af-account]>svg>path:last-child{fill:#142019!important;stroke:none!important}
+[data-af-account][data-authenticated=true]{color:#8fc64a!important}
+.af-platform-shell--verify [data-af-account][data-authenticated=true]{color:#83d9bd!important}
+html[data-theme=light] [data-af-account]{color:#78877e!important;background:#f5f7f3!important;border-color:#d7dfd5!important}
+html[data-theme=light] [data-af-account]>svg>path:last-child{fill:#f5f7f3!important}
+html[data-theme=light] [data-af-account][data-authenticated=true]{color:#658a31!important;background:#edf4e8!important}
+html[data-theme=light] .af-platform-shell--verify [data-af-account][data-authenticated=true]{color:#27856d!important}

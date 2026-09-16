@@ -13,10 +13,10 @@ void test('Chat platform links select exact staging origins', async () => {
 });
 
 void test('age and legacy member cookies use the staging parent before production matching', async () => {
-  const [environment, gate] = await Promise.all([read('lib/platform-environment.ts'), read('components/age-gate.tsx')]);
+  const [environment, gate] = await Promise.all([read('lib/platform-environment.ts'), read('components/platform-shell/platform-age.js')]);
   assert.match(environment, /hostname\.endsWith\('\.staging\.alienfarmers\.org'\)[\s\S]+return '\.staging\.alienfarmers\.org'/);
   assert.match(environment, /hostname\.endsWith\('\.alienfarmers\.org'\)[\s\S]+return '\.alienfarmers\.org'/);
-  assert.match(gate, /sharedCookieDomain\(location\.hostname\)/);
+  assert.match(gate, /staging\.alienfarmers\.org/);
   assert.doesNotMatch(gate, /Domain=\.alienfarmers\.org/);
 });
 

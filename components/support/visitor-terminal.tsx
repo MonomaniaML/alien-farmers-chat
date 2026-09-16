@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { ASSISTANTS, assistantById, isAnonymousAssistantAvailable } from '@/lib/assistant-chat/config';
 import { useAssistantCenter } from '@/hooks/use-assistant-center';
 import { ConversationList } from '@/components/assistant-chat/conversation-list';
@@ -15,11 +15,11 @@ import { useCloudSupport } from '@/hooks/use-cloud-support';
 
 const accessKey='af-chat-access:v1';
 
-export function VisitorTerminal(){return <I18nProvider><ConversationCenter/></I18nProvider>;}
-function ConversationCenter(){
- const {locale,applyMemberPreference}=useI18n(),copy=(text:string)=>assistantText(text,locale),center=useAssistantCenter(),cloud=useCloudSupport(locale),[theme,setTheme]=useState<'dark'|'light'>('dark'),[access,setAccess]=useState<VisitorAccess|null>(null),[gateOpen,setGateOpen]=useState(false),anonymous=access!=='member',candidateId=center.activeId||center.state.lastOpened,candidate=assistantById(candidateId)||ASSISTANTS[0],assistant=anonymous&&!isAnonymousAssistantAvailable(candidate)?ASSISTANTS[0]:candidate,selectedId=assistant.id,localConversation=center.state.conversations[assistant.id],conversation=assistant.id==='customer-support'&&cloud.conversation?{...cloud.conversation,draft:localConversation.draft}:localConversation,unreadMessageCount=Object.values(center.state.conversations).reduce((total,item)=>total+item.unread,0);
- useEffect(()=>{queueMicrotask(()=>{try{setTheme(localStorage.getItem('af-chat-theme')==='light'?'light':'dark');}catch{}});},[]);
- function toggleTheme(){setTheme(current=>{const next=current==='dark'?'light':'dark';try{localStorage.setItem('af-chat-theme',next);}catch{}return next;});}
+export function VisitorTerminal({initialTheme='dark'}:{initialTheme?:'dark'|'light'}={}){return <I18nProvider><ConversationCenter initialTheme={initialTheme}/></I18nProvider>;}
+function ConversationCenter({initialTheme}:{initialTheme:'dark'|'light'}){
+ const {locale,applyMemberPreference}=useI18n(),copy=(text:string)=>assistantText(text,locale),center=useAssistantCenter(),cloud=useCloudSupport(locale),[theme,setTheme]=useState<'dark'|'light'>(initialTheme),[access,setAccess]=useState<VisitorAccess|null>(null),[gateOpen,setGateOpen]=useState(false),anonymous=access!=='member',candidateId=center.activeId||center.state.lastOpened,candidate=assistantById(candidateId)||ASSISTANTS[0],assistant=anonymous&&!isAnonymousAssistantAvailable(candidate)?ASSISTANTS[0]:candidate,selectedId=assistant.id,localConversation=center.state.conversations[assistant.id],conversation=assistant.id==='customer-support'&&cloud.conversation?{...cloud.conversation,draft:localConversation.draft}:localConversation,unreadMessageCount=Object.values(center.state.conversations).reduce((total,item)=>total+item.unread,0);
+ useLayoutEffect(()=>{const sync=()=>setTheme(document.documentElement.dataset.theme==='light'?'light':'dark');sync();window.addEventListener('alien-farmers-theme-change',sync);return()=>window.removeEventListener('alien-farmers-theme-change',sync);},[]);
+ function toggleTheme(){setTheme(current=>{const next=current==='dark'?'light':'dark';document.documentElement.dataset.theme=next;return next;});}
  function handleSession(next:MemberProfile|null){if(next){applyMemberPreference(next.preferredLocale);setAccess('member');setGateOpen(false);try{localStorage.setItem(accessKey,'member');}catch{}return;}let saved:string|null=null;try{saved=localStorage.getItem(accessKey);}catch{}if(saved==='anonymous')setAccess('anonymous');else{setAccess(null);setGateOpen(true);}}
  function continueAnonymously(){setAccess('anonymous');setGateOpen(false);try{localStorage.setItem(accessKey,'anonymous');}catch{}}
  function authenticate(){setGateOpen(false);queueMicrotask(()=>openMemberAuth('login'));}

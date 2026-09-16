@@ -90,10 +90,10 @@ export function MemberProfileNavigation({ locale, apiBase = '/api/member', membe
     return value !== undefined && value > 0 ? <span className="member-unread-badge">{value > 99 ? '99+' : value}</span> : null;
   };
 
-  const signedOutButton = (kind: Shortcut) => <button key={kind} type="button" className={kind === 'profile' ? 'member-alien-login' : buttonClass(kind)} aria-label={label(kind)} title={label(kind)} onClick={() => openMemberAuth()}>{icon(kind)}{badge(kind)}</button>;
+  const signedOutButton = (kind: Shortcut) => <button key={kind} type="button" className={kind === 'profile' ? 'member-alien-login' : buttonClass(kind)} data-af-account={kind === 'profile' ? '' : undefined} data-authenticated={authenticated ? 'true' : 'false'} aria-label={label(kind)} title={label(kind)} onClick={() => openMemberAuth()}>{icon(kind)}{badge(kind)}</button>;
 
   const signedInButton = (kind: Shortcut, itemIcon: ReactNode) => <Popover key={kind} open={quickOpen === kind} onOpenChange={next => setQuickOpen(next ? kind : null)}>
-    <PopoverTrigger render={<button type="button" className={buttonClass(kind)} aria-label={label(kind)} title={label(kind)} />}>
+    <PopoverTrigger render={<button type="button" className={buttonClass(kind)} data-af-account={kind === 'profile' ? '' : undefined} data-authenticated={authenticated ? 'true' : 'false'} aria-label={label(kind)} title={label(kind)} />}>
       {itemIcon}{badge(kind)}
     </PopoverTrigger>
     <PopoverContent className={`member-summary-popover theme-${theme}`} side="bottom" align="end" sideOffset={9}>
