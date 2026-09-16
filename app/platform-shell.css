@@ -22,3 +22,8 @@ html[data-theme=light] .af-platform-shell,.theme-light .af-platform-shell{border
 
 /* Theme glyphs describe the active appearance: moon in dark mode, sun in light mode. */
 .af-platform-shell__drawer-head-sun{display:none}.af-platform-shell__drawer-head-moon{display:block}html[data-theme=light] .af-platform-shell__drawer-head-sun,.theme-light .af-platform-shell__drawer-head-sun{display:block}html[data-theme=light] .af-platform-shell__drawer-head-moon,.theme-light .af-platform-shell__drawer-head-moon{display:none}
+
+/* One quality preference for navigation, scenes and games. */
+.af-platform-shell__effects{display:grid;grid-template-columns:1fr;gap:10px;padding:18px 0 12px;color:inherit;font:inherit;border-top:1px solid #78877d30}.af-platform-shell__effects>span{font-size:13px;letter-spacing:.04em}.af-platform-shell__effects select{width:100%;min-height:42px;padding:9px 12px;border:1px solid #78877d66;border-radius:8px;color:inherit;background:#152019;font:inherit;font-size:13px;color-scheme:dark;cursor:pointer}.af-platform-shell__effects select:focus-visible{outline:2px solid currentColor;outline-offset:3px}.af-platform-shell__effects>small{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}html[data-theme=light] .af-platform-shell__effects select,.theme-light .af-platform-shell__effects select{color:#24382d;background:#fff;color-scheme:light}
+html[data-effects-quality=off] .motion-planet *,html[data-effects-quality=off] .planet-logo *,html[data-effects-quality=off] .portal-icon *,html[data-effects-quality=off] .ambient-orbit{animation:none!important;transition:none!important}
+html[data-effects-quality=low] .portal-icon *,html[data-effects-quality=low] .ambient-orbit{animation:none!important}
