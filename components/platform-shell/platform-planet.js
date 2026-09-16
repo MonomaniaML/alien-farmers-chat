@@ -1,0 +1,2 @@
+// Shared static markup for React wrappers and the framework-neutral age gate.
+export const platformPlanetMarkup = '<span class="af-brand-planet" aria-hidden="true"><b class="af-brand-planet__core"></b><b class="af-brand-planet__ring af-brand-planet__back"></b><span class="af-brand-planet__orbit"><i class="af-brand-planet__satellite"></i></span><b class="af-brand-planet__ring af-brand-planet__front"></b></span>';

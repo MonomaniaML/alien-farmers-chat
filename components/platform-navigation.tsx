@@ -11,7 +11,7 @@ import { PlatformShell } from '@/components/platform-shell/PlatformShell';
 
 const localeNames: Record<Locale, { short: string; name: string }> = {
   en: { short: 'EN', name: 'English' }, th: { short: 'TH', name: 'ไทย' },
-  'zh-CN': { short: '简', name: '简体中文' }, 'zh-TW': { short: '繁', name: '繁體中文' }, ru: { short: 'RU', name: 'Русский' },
+  'zh-CN': { short: '中', name: '简体中文' }, 'zh-TW': { short: '繁', name: '繁體中文' }, ru: { short: 'RU', name: 'Русский' },
 };
 
 function LanguageMenu() {
