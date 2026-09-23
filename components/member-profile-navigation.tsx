@@ -11,11 +11,17 @@ import { platformOrigins } from '@/lib/platform-environment';
 import { ticketSessionSync } from '@/lib/identity/return-path';
 
 export function openMemberAuth(mode: 'login' | 'register' = 'login') {
-  const target = new URL(platformOrigins.member);
   const previous = new URL(window.location.href);
   previous.searchParams.delete('af_session_sync');
+  if (mode === 'login') {
+    const target = new URL('/auth/login', previous.origin);
+    target.searchParams.set('returnTo', previous.pathname + previous.search + previous.hash);
+    window.location.assign(target.toString());
+    return;
+  }
+  const target = new URL(platformOrigins.member);
   target.searchParams.set('returnTo', previous.toString());
-  if (mode === 'register') target.searchParams.set('mode', 'register');
+  target.searchParams.set('mode', 'register');
   window.location.assign(target.toString());
 }
 

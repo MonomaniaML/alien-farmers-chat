@@ -31,7 +31,7 @@ void test('Chat uses the common age confirmation independently from member login
   assert.match(layout, /<AgeGate/);
 });
 
-void test('Chat customer pages use the shared platform shell and current-tab member flow', async () => {
+void test('Chat customer pages start local login and keep registration in Member Center', async () => {
   const [navigation, terminal, member, shell] = await Promise.all([
     read('components/platform-navigation.tsx'),
     read('components/support/visitor-terminal.tsx'),
@@ -45,9 +45,10 @@ void test('Chat customer pages use the shared platform shell and current-tab mem
   assert.match(shell, /af-platform-shell__mobile/);
   assert.match(navigation, /<PlatformIcon type=\{key\}/);
   assert.match(navigation, /origins=\{platformOrigins\}/);
+  assert.match(member, /new URL\('\/auth\/login', previous\.origin\)/);
+  assert.match(member, /previous\.pathname \+ previous\.search \+ previous\.hash/);
   assert.match(member, /new URL\(platformOrigins\.member\)/);
   assert.match(member, /window\.location\.assign\(target\.toString\(\)\)/);
-  assert.doesNotMatch(member, /window\.location\.assign\(`\/auth\/login/);
   assert.doesNotMatch(member, /member-nav-loading|LoaderCircle/);
   assert.match(member, /kind === 'profile' \? 'member-alien-login'/);
   assert.match(member, /member-summary-popover/);
