@@ -35,6 +35,10 @@ const paths: Record<PlatformRouteKey, ReactNode> = {
   support: <path d="M5 13v-2a7 7 0 0 1 14 0v2M5 12H3v6h4v-6m12 0h2v6h-4v-6m0 7c-1 1.3-2.6 2-5 2" />,
 };
 
+function HighwayLink() {
+  return <a className="af-platform-shell__highway" href="https://highwaythai.com/" aria-label="HIGHWAY"><span className="af-platform-shell__highway-mark" aria-hidden="true" /></a>;
+}
+
 function LineIcon({ kind }: { kind: PlatformRouteKey }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[kind]}</svg>;
 }
@@ -81,9 +85,9 @@ export function PlatformShell({ locale, activeKey, origins, renderBrandMark, ren
         <div className="af-platform-shell__brand">{renderBrandMark("header")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></div>
         <div className="af-platform-shell__actions">{desktopActions}</div>
       </div>
-      <nav className="af-platform-shell__shortcuts" aria-label="Quick Access">{routes.map(([key, href]) => routeControl(key, href))}</nav>
+      <nav className="af-platform-shell__shortcuts" aria-label="Quick Access">{routes.map(([key, href]) => routeControl(key, href))}<HighwayLink /></nav>
     </header>
-    <PlatformDrawer open={open} onClose={() => setOpen(false)} locale={locale} accent={accent} brand={<>{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></>} themeControl={drawerThemeControl}>{routes.map(([key, href]) => routeControl(key, href, true))}</PlatformDrawer>
+    <PlatformDrawer open={open} onClose={() => setOpen(false)} locale={locale} accent={accent} brand={<>{renderBrandMark("drawer")}<a href={origins.website}><strong>ALIEN FARMERS</strong></a></>} themeControl={drawerThemeControl}>{routes.map(([key, href]) => routeControl(key, href, true))}<HighwayLink /></PlatformDrawer>
     {open ? <button className="af-platform-shell__scrim" type="button" onPointerDown={() => setOpen(false)} onClick={() => setOpen(false)} aria-label={copy.close} /> : null}
     <nav className={`af-platform-shell__mobile af-platform-shell__mobile--${accent}`} aria-label="Primary Navigation">{([['home', origins.website], ['archive', `${origins.website}/flowers`], ['verify', withPlatformLocale(origins.verify, locale)], ['member', origins.member]] as Array<[PlatformRouteKey,string]>).map(([key, href]) => <a className={activeKey === key ? "active" : ""} href={href} key={key}><LineIcon kind={key} /><span>{key === "archive" ? copy.archiveTab : key === "verify" ? copy.verifyTab : key === "member" ? copy.me : copy[key]}</span></a>)}</nav>
   </>;
