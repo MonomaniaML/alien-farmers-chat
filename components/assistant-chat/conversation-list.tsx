@@ -2,8 +2,9 @@ import { LockKeyhole, Sparkles } from 'lucide-react';
 import {
   ASSISTANTS,
   isAnonymousAssistantAvailable,
+  isUnreleasedAssistant,
 } from '@/lib/assistant-chat/config';
-import type { ConversationCenterState } from '@/lib/assistant-chat/types';
+import type { AssistantConversation, ConversationCenterState } from '@/lib/assistant-chat/types';
 import { AssistantAvatar } from './assistant-avatar';
 import { assistantText } from '@/lib/assistant-chat/copy';
 import { useI18n } from '@/lib/support/i18n';
@@ -25,12 +26,16 @@ export function ConversationList({
   onSelect,
   anonymous = false,
   onLockedSelect,
+  supportConnected = false,
+  liveConversations = {},
 }: {
   state: ConversationCenterState;
   selectedId: string;
   onSelect: (id: string) => void;
   anonymous?: boolean;
   onLockedSelect?: () => void;
+  supportConnected?: boolean;
+  liveConversations?: Partial<Record<string,AssistantConversation>>;
 }) {
   const { locale } = useI18n(),
     copy = (text: string) => assistantText(text, locale),
@@ -64,7 +69,7 @@ export function ConversationList({
           aria-disabled={anonymous}
         >
           {anonymous ? <LockKeyhole size={12} /> : null}
-          {copy('Track delivery')}
+          {copy('Delivery help')}
         </button>
         <button onClick={() => choose('customer-support')}>
           {copy('Talk to staff')}
@@ -77,7 +82,7 @@ export function ConversationList({
             <ul>
               {group.ids.map((id) => {
                 const assistant = ASSISTANTS.find((item) => item.id === id)!,
-                  conversation = state.conversations[id],
+                  conversation = liveConversations[id] || state.conversations[id],
                   last = conversation.messages.at(-1),
                   locked =
                     anonymous && !isAnonymousAssistantAvailable(assistant);
@@ -93,7 +98,7 @@ export function ConversationList({
                       onClick={() => choose(id)}
                       aria-disabled={locked}
                     >
-                      <AssistantAvatar icon={assistant.avatar} small />
+                      <AssistantAvatar icon={assistant.avatar} small statusDot={assistant.type==='support'?supportConnected:assistant.type==='delivery'||assistant.type==='wholesale'?false:!isUnreleasedAssistant(assistant)} />
                       <span className="assistant-row-copy">
                         <span className="assistant-row-top">
                           <strong>{copy(assistant.name)}</strong>
@@ -113,6 +118,8 @@ export function ConversationList({
                               <LockKeyhole size={12} />
                               {copy('Sign in to unlock this conversation')}
                             </>
+                          ) : isUnreleasedAssistant(assistant) ? (
+                            copy('Coming soon')
                           ) : (
                             <>
                               {last?.sender === 'user'
@@ -130,7 +137,7 @@ export function ConversationList({
                           <span
                             className={
                               'assistant-presence ' +
-                              (locked ? 'locked' : assistant.statusKind)
+                              (locked ? 'locked' : assistant.type === 'support' ? supportConnected ? 'online' : 'unavailable' : isUnreleasedAssistant(assistant) ? 'unavailable' : assistant.statusKind)
                             }
                           >
                             {locked ? (
@@ -146,7 +153,7 @@ export function ConversationList({
                               ? copy('Member access')
                               : assistant.type === 'support'
                                 ? copy(
-                                    state.supportOnline ? 'Online' : 'Offline',
+                                    supportConnected ? 'Support connected' : 'Support unavailable',
                                   )
                                 : copy(assistant.status)}
                           </span>

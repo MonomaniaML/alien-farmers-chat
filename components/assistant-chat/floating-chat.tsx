@@ -66,8 +66,9 @@ function FloatingChatSurface({
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const triggerRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const assistantId =
-    center.activeId === 'customer-support' ? 'customer-support' : 'af-ai';
+  // The embedded widget is an on-device quick-answer guide. Human support
+  // must open the persisted conversation center, never the old local mock.
+  const assistantId = 'af-ai';
   const assistant = assistantById(assistantId);
   const conversation = assistant
     ? center.state.conversations[assistant.id]
@@ -160,9 +161,20 @@ function FloatingChatSurface({
     });
   }
 
+  function openLiveSupport() {
+    const url = new URL('/chat', window.location.origin).toString();
+    try {
+      if (window.top && window.top !== window) {
+        window.top.location.href = url;
+        return;
+      }
+    } catch {}
+    window.location.assign(url);
+  }
+
   function handleAction(item: QuickAction) {
     if (item.action === 'open_support') {
-      center.select('customer-support');
+      openLiveSupport();
       return;
     }
     center.send(assistantId, item.value, true);
@@ -253,6 +265,8 @@ function FloatingChatSurface({
             </div>
           )}
 
+          <p className="af-floating-disclaimer">{copy('Quick answers on this device; this is not a live AI or staff conversation.')}</p>
+
           <div className="af-floating-content">
             {!center.ready && !hasError ? (
               <output className="af-floating-state" aria-live="polite">
@@ -286,10 +300,7 @@ function FloatingChatSurface({
                   >
                     {copy('Opening Hours')}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => center.select('customer-support')}
-                  >
+                  <button type="button" onClick={openLiveSupport}>
                     {copy('Talk to Staff')}
                   </button>
                 </div>

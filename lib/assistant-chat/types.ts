@@ -7,7 +7,7 @@ export type MessageSender='user'|'assistant'|'staff'|'system';
 export type QuickAction={label:string;value:string;action?:'message'|'open_support'|'submit_inquiry'};
 export type ChatMessage={id:string;sender:MessageSender;body:string;createdAt:string;localized?:boolean;quickActions?:QuickAction[]};
 export interface ChatAssistant{
- id:string;type:AssistantType;channel:ConversationChannel;name:string;description:string;avatar:AssistantIcon;status:string;statusKind:AssistantStatus;automated?:boolean;private?:boolean;visibility?:PreviewRole[];
+ id:string;type:AssistantType;channel:ConversationChannel;name:string;description:string;avatar:AssistantIcon;status:string;statusKind:AssistantStatus;automated?:boolean;private?:boolean;visibility?:PreviewRole[];unreleased?:boolean;
 }
 export type WholesaleInquiry={step:'interest'|'quantity'|'location'|'contact'|'review'|'submitted';interest:string;quantity:string;location:string;contact:string};
 export type AssistantConversation={messages:ChatMessage[];unread:number;updatedAt:string;draft:string;conversationStatus?:'active'|'waiting'|'closed';inquiry?:WholesaleInquiry};

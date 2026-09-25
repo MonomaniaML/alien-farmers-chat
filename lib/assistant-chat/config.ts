@@ -9,9 +9,9 @@ export const WHOLESALE_ACTIONS:QuickAction[]=['Flower Wholesale','Rolling Papers
 export const ASSISTANTS:ChatAssistant[]=[
  {id:'af-ai',type:'ai',channel:'assistant',name:'AF AI Assistant',description:'Products, stores and general questions',avatar:'spark',status:'Automated assistant',statusKind:'automated',automated:true},
  {id:'customer-support',type:'support',channel:'human_support',name:'Customer Support',description:'Talk with the ALIEN FARMERS team',avatar:'support',status:'Staff online',statusKind:'online'},
- {id:'delivery',type:'delivery',channel:'delivery',name:'Delivery Assistant',description:'Order status, ETA and delivery help',avatar:'delivery',status:'Automated assistant',statusKind:'automated',automated:true},
+ {id:'delivery',type:'delivery',channel:'delivery',name:'Delivery Assistant',description:'Message our team about delivery',avatar:'delivery',status:'Staff assistance',statusKind:'available'},
  {id:'feedback',type:'feedback',channel:'feedback_private',name:'Feedback Assistant',description:'Feedback shared privately with management',avatar:'feedback',status:'Management only',statusKind:'private',private:true,visibility:['owner','admin']},
- {id:'wholesale',type:'wholesale',channel:'wholesale',name:'Wholesale Assistant',description:'Wholesale and business inquiries',avatar:'wholesale',status:'Inquiry guide',statusKind:'available',automated:true,visibility:['owner','admin']},
+ {id:'wholesale',type:'wholesale',channel:'wholesale',name:'Wholesale Assistant',description:'Wholesale inquiries for management',avatar:'wholesale',status:'Management only',statusKind:'private',private:true,visibility:['owner','admin']},
 ];
 
 const emptyConversation=():ConversationCenterState['conversations'][string]=>({unread:0,updatedAt:'',draft:'',messages:[]});
@@ -24,4 +24,5 @@ export function createInitialState():ConversationCenterState{return {version:3,l
 }};}
 export const assistantById=(id:string)=>ASSISTANTS.find(assistant=>assistant.id===id);
 export const isAnonymousAssistantAvailable=(assistant:ChatAssistant)=>assistant.type==='ai'||assistant.type==='support';
+export const isUnreleasedAssistant=(assistant:ChatAssistant)=>assistant.unreleased===true;
 export const canRoleAccess=(assistant:ChatAssistant,role:PreviewRole)=>!assistant.visibility||assistant.visibility.includes(role);

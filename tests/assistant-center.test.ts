@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ASSISTANTS, canRoleAccess, createInitialState } from '../lib/assistant-chat/config.ts';
+import { ASSISTANTS, canRoleAccess, createInitialState, isUnreleasedAssistant } from '../lib/assistant-chat/config.ts';
 import { assistantText } from '../lib/assistant-chat/copy.ts';
 import { mockIntentMatcher } from '../lib/assistant-chat/mock-intent.ts';
 import { mockProductLookup } from '../lib/assistant-chat/mock-product-catalog.ts';
@@ -14,6 +14,9 @@ void test('conversation center defines five shared assistant channels with priva
  assert.deepEqual(wholesale?.visibility,['owner','admin']);assert.equal(canRoleAccess(wholesale!,'staff'),false);
  const state=createInitialState();assert.equal(Object.keys(state.conversations).length,5);assert.equal(state.version,3);
  for(const assistant of ASSISTANTS){const conversation=state.conversations[assistant.id];assert.equal(conversation.messages.length,0);assert.equal(conversation.unread,0);}
+ assert.deepEqual(ASSISTANTS.filter(isUnreleasedAssistant).map(item=>item.id),[]);
+ assert.equal(ASSISTANTS.find(item=>item.id==='delivery')?.automated,undefined);
+ assert.equal(ASSISTANTS.find(item=>item.id==='wholesale')?.private,true);
 });
 
 void test('assistant interface and saved mock messages render in all supported languages',()=>{
@@ -22,6 +25,10 @@ void test('assistant interface and saved mock messages render in all supported l
  assert.equal(assistantText('Track My Order','th'),'ติดตามคำสั่งซื้อ');
  assert.equal(assistantText('Private channel · Visible to management only','zh-TW'),'私密頻道 · 僅管理層可見');
  assert.match(assistantText('Please review your inquiry:\n\nProduct: Rolling Papers\nQuantity: 100–500\nLocation: Bangkok\nContact: email','ru'),/Товар: Rolling Papers/);
+ for(const locale of ['th','zh-CN','zh-TW','ru'] as const){
+  assert.notEqual(assistantText('This channel is not live yet. Messages here are not sent to our team.',locale),'This channel is not live yet. Messages here are not sent to our team.');
+  assert.notEqual(assistantText('Support connected',locale),'Support connected');
+ }
 });
 
 void test('mock AI intent matcher covers the configured local intents without an API',()=>{
