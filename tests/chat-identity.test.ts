@@ -23,6 +23,12 @@ void test('Chat member proxy sends a short audience-bound assertion and keeps le
   assert.match(proxy, /if \(cookie\) headers\.set\('Cookie', cookie\)/);
 });
 
+void test('signed-in support never silently falls back to a guest identity', async () => {
+  const session = await read('lib/support/cloud-session.ts');
+  assert.match(session, /if\(session&&!assertion\)throw new Error/);
+  assert.match(session, /headers\.set\('X-AF-Chat-Auth-Mode',session\?'member':'guest'\)/);
+});
+
 void test('Chat uses the common age confirmation independently from member login', async () => {
   const [gate, layout] = await Promise.all([read('components/platform-shell/platform-age.js'), read('app/layout.tsx')]);
   assert.match(gate, /af_age_verified|ageVerificationCookie/);

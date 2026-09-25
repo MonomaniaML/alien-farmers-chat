@@ -1,3 +1,5 @@
-import {headers} from 'next/headers';
-import {SupportPage} from '@/components/support/support-page';
-export default async function Tickets(){const cookie=(await headers()).get('cookie')||'';return <SupportPage tickets initialTheme={/(?:^|;\s*)af_theme=light(?:;|$)/.test(cookie)?'light':'dark'}/>;}
+import {redirect} from 'next/navigation';
+
+// Ticket APIs are not yet available in the Database service. Keep the route
+// from presenting a form that cannot save a customer's request.
+export default function Tickets(){redirect('/chat');}
