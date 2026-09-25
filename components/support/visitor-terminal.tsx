@@ -45,8 +45,8 @@ function ConversationCenter({initialTheme,initialAssistant}:{initialTheme:'dark'
  const noticeKind=unreleased?'unreleased' as const:selectedId==='af-ai'?'local' as const:selectedId==='delivery'?'delivery' as const:selectedId==='wholesale'?'wholesale' as const:null;
  const isCloud=selectedId==='customer-support'||Boolean(memberChannel);
  const selectedCloud=selectedId==='delivery'?deliveryCloud:selectedId==='feedback'?feedbackCloud:selectedId==='wholesale'?wholesaleCloud:supportCloud;
- const selectedCloudConnected=Boolean(selectedCloud.conversation)&&!selectedCloud.error;
- const supportConnected=Boolean(supportCloud.conversation)&&!supportCloud.error;
+ const selectedCloudConnected=selectedCloud.available;
+ const supportConnected=supportCloud.available;
  const localConversation=center.state.conversations[selectedId];
  const conversation=isCloud?{...(selectedCloud.conversation||blankCloudConversation),messages:selectedCloud.conversation?.messages||[],draft:memberChannel?memberDrafts[memberChannel]||'':localConversation.draft}:localConversation;
  const unreadMessageCount=Object.entries(center.state.conversations).reduce((total,[id,item])=>total+(id==='af-ai'?item.unread:0),0);

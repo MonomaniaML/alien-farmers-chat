@@ -24,6 +24,7 @@ function mapped(value: WireConversation): AssistantConversation {
 
 export function useCloudSupport(locale: string, channel: CloudChannel = 'human_support', enabled = true, identityKey = 'guest') {
   const [wire, setWire] = useState<{ identityKey: string; conversation: WireConversation } | null>(null);
+  const [readyIdentity, setReadyIdentity] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
   const mounted = useRef(false);
@@ -38,16 +39,15 @@ export function useCloudSupport(locale: string, channel: CloudChannel = 'human_s
     try {
       const response = await fetch(`/api/support/conversation?locale=${encodeURIComponent(locale)}&channel=${channel}`, { cache: 'no-store' });
       const payload = await response.json();
-      if (response.status === 401 || response.status === 403) {
-        if (mounted.current && requestId === sequence.current && currentIdentity.current === identityKey) setWire(null);
-      }
       if (!response.ok) throw new Error(payload.error?.message || 'Support unavailable');
       if (mounted.current && requestId === sequence.current && currentIdentity.current === identityKey) {
-        setWire({ identityKey, conversation: payload.data });
+        setWire(payload.data ? { identityKey, conversation: payload.data } : null);
+        setReadyIdentity(identityKey);
         setError('');
       }
     } catch (reason) {
       if (mounted.current && requestId === sequence.current && currentIdentity.current === identityKey) {
+        setReadyIdentity(null);
         setError(reason instanceof Error ? reason.message : 'Support unavailable');
       }
     }
@@ -57,6 +57,7 @@ export function useCloudSupport(locale: string, channel: CloudChannel = 'human_s
     pending.current = null;
     setSending(false);
     setError('');
+    setReadyIdentity(null);
     if (!enabled) {
       mounted.current = false;
       sequence.current++;
@@ -74,7 +75,7 @@ export function useCloudSupport(locale: string, channel: CloudChannel = 'human_s
   }, [enabled, refresh]);
 
   const send = useCallback(async (body: string) => {
-    if (!enabled || !wire || wire.identityKey !== identityKey || !body.trim() || sending) return false;
+    if (!enabled || readyIdentity !== identityKey || !body.trim() || sending) return false;
     const text = body.trim();
     const message = pending.current?.identityKey === identityKey && pending.current.body === text
       ? pending.current
@@ -82,7 +83,19 @@ export function useCloudSupport(locale: string, channel: CloudChannel = 'human_s
     pending.current = message;
     setSending(true);
     try {
-      const response = await fetch(`/api/support/conversation/${encodeURIComponent(wire.conversation.id)}/messages`, {
+      let conversationId = wire?.identityKey === identityKey ? wire.conversation.id : null;
+      if (!conversationId) {
+        const created = await fetch('/api/support/conversation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channel, locale }),
+        });
+        const createdPayload = await created.json();
+        if (!created.ok || !createdPayload.data?.id) throw new Error(createdPayload.error?.message || 'Conversation could not be opened.');
+        conversationId = createdPayload.data.id;
+      }
+      if (!conversationId) throw new Error('Conversation could not be opened.');
+      const response = await fetch(`/api/support/conversation/${encodeURIComponent(conversationId)}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ body: message.body, clientMessageId: message.clientMessageId, locale, sourceSite: 'chat' }),
@@ -100,10 +113,11 @@ export function useCloudSupport(locale: string, channel: CloudChannel = 'human_s
     } finally {
       if (mounted.current && currentIdentity.current === identityKey) setSending(false);
     }
-  }, [enabled, identityKey, locale, refresh, sending, wire]);
+  }, [channel, enabled, identityKey, locale, readyIdentity, refresh, sending, wire]);
 
   return {
     conversation: enabled && wire?.identityKey === identityKey ? mapped(wire.conversation) : null,
+    available: enabled && readyIdentity === identityKey && !error,
     error,
     sending,
     refresh,
